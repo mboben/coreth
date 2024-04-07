@@ -46,6 +46,15 @@ var (
 	// AvalancheLocalChainID ...
 	AvalancheLocalChainID = big.NewInt(43112)
 
+	// Flare Chain IDs.
+	FlareChainID      = big.NewInt(14)  // https://github.com/ethereum-lists/chains/blob/master/_data/chains/eip155-14.json
+	CostonChainID     = big.NewInt(16)  // https://github.com/ethereum-lists/chains/blob/master/_data/chains/eip155-16.json
+	SongbirdChainID   = big.NewInt(19)  // https://github.com/ethereum-lists/chains/blob/master/_data/chains/eip155-19.json
+	CostwoChainID     = big.NewInt(114) // TO-DO: Register with https://github.com/ethereum-lists
+	StagingChainID    = big.NewInt(161)
+	LocalFlareChainID = big.NewInt(162)
+	LocalChainID      = big.NewInt(4294967295)
+
 	errNonGenesisForkByHeight = errors.New("coreth only supports forking by height at the genesis block")
 )
 
@@ -117,6 +126,50 @@ var (
 		ApricotPhase4BlockTimestamp: big.NewInt(0),
 		ApricotPhase5BlockTimestamp: big.NewInt(0),
 		BlueberryBlockTimestamp:     big.NewInt(0),
+	}
+
+	// CostonChainConfig is the configuration for the Coston test network.
+	CostonChainConfig = &ChainConfig{
+		ChainID:                     CostonChainID,
+		HomesteadBlock:              big.NewInt(0),
+		DAOForkBlock:                big.NewInt(0),
+		DAOForkSupport:              true,
+		EIP150Block:                 big.NewInt(0),
+		EIP150Hash:                  common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
+		EIP155Block:                 big.NewInt(0),
+		EIP158Block:                 big.NewInt(0),
+		ByzantiumBlock:              big.NewInt(0),
+		ConstantinopleBlock:         big.NewInt(0),
+		PetersburgBlock:             big.NewInt(0),
+		IstanbulBlock:               big.NewInt(0),
+		MuirGlacierBlock:            big.NewInt(0),
+		ApricotPhase1BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase2BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC).Unix()),
+	}
+
+	// SongbirdChainConfig is the configuration for the Songbird canary network.
+	SongbirdChainConfig = &ChainConfig{
+		ChainID:                     SongbirdChainID,
+		HomesteadBlock:              big.NewInt(0),
+		DAOForkBlock:                big.NewInt(0),
+		DAOForkSupport:              true,
+		EIP150Block:                 big.NewInt(0),
+		EIP150Hash:                  common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
+		EIP155Block:                 big.NewInt(0),
+		EIP158Block:                 big.NewInt(0),
+		ByzantiumBlock:              big.NewInt(0),
+		ConstantinopleBlock:         big.NewInt(0),
+		PetersburgBlock:             big.NewInt(0),
+		IstanbulBlock:               big.NewInt(0),
+		MuirGlacierBlock:            big.NewInt(0),
+		ApricotPhase1BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase2BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC).Unix()),
 	}
 
 	TestChainConfig          = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
@@ -204,6 +257,12 @@ func (c *ChainConfig) String() string {
 	banner += fmt.Sprintf(" - Bluberry Timestamp:          %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0)\n", c.BlueberryBlockTimestamp)
 	banner += "\n"
 	return banner
+}
+
+// SGB-MERGE
+// Code for songbird network (songbird, coston, local id)
+func (c *ChainConfig) IsSongbirdCode() bool {
+	return c.ChainID.Cmp(SongbirdChainID) == 0 || c.ChainID.Cmp(CostonChainID) == 0 || c.ChainID.Cmp(LocalChainID) == 0
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.
@@ -519,6 +578,10 @@ type Rules struct {
 	IsApricotPhase1, IsApricotPhase2, IsApricotPhase3, IsApricotPhase4, IsApricotPhase5 bool
 	IsBlueberry                                                                         bool
 
+	// SGB-MERGE
+	// Songbird (coston, local)
+	IsSongbirdCode bool
+
 	// Precompiles maps addresses to stateful precompiled contracts that are enabled
 	// for this rule set.
 	// Note: none of these addresses should conflict with the address space used by
@@ -542,6 +605,7 @@ func (c *ChainConfig) rules(num *big.Int) Rules {
 		IsConstantinople: c.IsConstantinople(num),
 		IsPetersburg:     c.IsPetersburg(num),
 		IsIstanbul:       c.IsIstanbul(num),
+		IsSongbirdCode:   c.IsSongbirdCode(),
 	}
 }
 

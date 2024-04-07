@@ -225,6 +225,110 @@ func (evm *EVM) Interpreter() *EVMInterpreter {
 	return evm.interpreter
 }
 
+// DaemonCall separates a regular call from taking a snapshot and reverting to it in case of error.
+// The function returns the snapshot in order to permit another opportunity for reverting to the
+// snapshot in the event that the subsequent call to mint() in coreth/core/daemon.go fails.
+func (evm *EVM) DaemonCall(caller ContractRef, addr common.Address, input []byte, gas uint64) (snapshot int, ret []byte, leftOverGas uint64, err error) {
+	// Temporarily disable EVM debugging
+	oldDebug := evm.Config.Debug
+	oldInterpreterDebug := evm.interpreter.cfg.Debug
+	defer func() {
+		evm.Config.Debug = oldDebug
+		evm.interpreter.cfg.Debug = oldInterpreterDebug
+	}()
+	evm.Config.Debug = false
+	evm.interpreter.cfg.Debug = false
+
+	value := big.NewInt(0)
+	// Fail if we're trying to execute above the call depth limit
+	if evm.depth > int(params.CallCreateDepth) {
+		return 0, nil, gas, vmerrs.ErrDepth
+	}
+	// Fail if we're trying to transfer more than the available balance
+	// Note: it is not possible for a negative value to be passed in here due to the fact
+	// that [value] will be popped from the stack and decoded to a *big.Int, which will
+	// always yield a positive result.
+	if value.Sign() != 0 && !evm.Context.CanTransfer(evm.StateDB, caller.Address(), value) {
+		return 0, nil, gas, vmerrs.ErrInsufficientBalance
+	}
+	snapshot = evm.StateDB.Snapshot()
+
+	// Perform Daemon Call
+	ret, gas, err = evm.CallWithoutSnapshot(caller, addr, input, gas, value)
+
+	// When an error was returned by the EVM or when setting the creation code
+	// above we revert to the snapshot and consume any gas remaining. Additionally
+	// when we're in homestead this also counts for code storage gas errors.
+	if err != nil {
+		evm.StateDB.RevertToSnapshot(snapshot)
+		if err != vmerrs.ErrExecutionReverted {
+			gas = 0
+		}
+	}
+	return snapshot, ret, gas, err
+}
+
+// CallWithoutSnapshot executes the contract associated with the addr with the given input as
+// parameters. It also handles any necessary value transfer required and takes
+// the necessary steps to create accounts
+func (evm *EVM) CallWithoutSnapshot(caller ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int) (ret []byte, leftOverGas uint64, err error) {
+	p, isPrecompile := evm.precompile(addr)
+
+	if !evm.StateDB.Exist(addr) {
+		if !isPrecompile && evm.chainRules.IsEIP158 && value.Sign() == 0 {
+			// Calling a non existing account, don't do anything, but ping the tracer
+			if evm.Config.Debug {
+				if evm.depth == 0 {
+					evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, value)
+					evm.Config.Tracer.CaptureEnd(ret, 0, 0, nil)
+				} else {
+					evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, value)
+					evm.Config.Tracer.CaptureExit(ret, 0, nil)
+				}
+			}
+			return nil, gas, nil
+		}
+		evm.StateDB.CreateAccount(addr)
+	}
+	evm.Context.Transfer(evm.StateDB, caller.Address(), addr, value)
+
+	// Capture the tracer start/end events in debug mode
+	if evm.Config.Debug {
+		if evm.depth == 0 {
+			evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, value)
+			defer func(startGas uint64, startTime time.Time) { // Lazy evaluation of the parameters
+				evm.Config.Tracer.CaptureEnd(ret, startGas-gas, time.Since(startTime), err)
+			}(gas, time.Now())
+		} else {
+			// Handle tracer events for entering and exiting a call frame
+			evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, value)
+			defer func(startGas uint64) {
+				evm.Config.Tracer.CaptureExit(ret, startGas-gas, err)
+			}(gas)
+		}
+	}
+
+	if isPrecompile {
+		ret, gas, err = RunStatefulPrecompiledContract(p, evm, caller.Address(), addr, input, gas, evm.interpreter.readOnly)
+	} else {
+		// Initialise a new contract and set the code that is to be used by the EVM.
+		// The contract is a scoped environment for this execution context only.
+		code := evm.StateDB.GetCode(addr)
+		if len(code) == 0 {
+			ret, err = nil, nil // gas is unchanged
+		} else {
+			addrCopy := addr
+			// If the account has no code, we can abort here
+			// The depth-check is already done, and precompiles handled above
+			contract := NewContract(caller, AccountRef(addrCopy), value, gas)
+			contract.SetCallCode(&addrCopy, evm.StateDB.GetCodeHash(addrCopy), code)
+			ret, err = evm.interpreter.Run(contract, input, false)
+			gas = contract.Gas
+		}
+	}
+	return ret, gas, err
+}
+
 // Call executes the contract associated with the addr with the given input as
 // parameters. It also handles any necessary value transfer required and takes
 // the necessary steps to create accounts and reverses the state in case of an
@@ -670,6 +774,17 @@ func (evm *EVM) Create2(caller ContractRef, code []byte, gas uint64, endowment *
 func (evm *EVM) ChainConfig() *params.ChainConfig { return evm.chainConfig }
 
 func (evm *EVM) NativeAssetCall(caller common.Address, input []byte, suppliedGas uint64, gasCost uint64, readOnly bool) (ret []byte, remainingGas uint64, err error) {
+	if suppliedGas < gasCost {
+		return nil, 0, vmerrs.ErrOutOfGas
+	}
+	remainingGas = suppliedGas - gasCost
+	if evm.Context.Time.Cmp(constants.NativeAssetCallDeprecationTime) >= 0 {
+		return nil, remainingGas, vmerrs.ErrNativeAssetCallDeprecated
+	}
+	return evm.NativeAssetCallDeprecated(caller, input, suppliedGas, gasCost, readOnly)
+}
+
+func (evm *EVM) NativeAssetCallDeprecated(caller common.Address, input []byte, suppliedGas uint64, gasCost uint64, readOnly bool) (ret []byte, remainingGas uint64, err error) {
 	if suppliedGas < gasCost {
 		return nil, 0, vmerrs.ErrOutOfGas
 	}

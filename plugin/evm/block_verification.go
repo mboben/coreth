@@ -98,12 +98,23 @@ func (v blockValidator) SyntacticVerify(b *Block, rules params.Rules) error {
 	}
 
 	// Enforce static gas limit after ApricotPhase1 (prior to ApricotPhase1 it's handled in processing).
-	if rules.IsApricotPhase1 {
-		if ethHeader.GasLimit != params.ApricotPhase1GasLimit {
+
+	if rules.IsSongbirdCode {
+		// SGB-MERGE
+		if rules.IsApricotPhase5 && ethHeader.GasLimit != params.SgbApricotPhase5GasLimit {
 			return fmt.Errorf(
-				"expected gas limit to be %d after apricot phase 1 but got %d",
-				params.ApricotPhase1GasLimit, ethHeader.GasLimit,
+				"expected gas limit to be %d in apricot phase 5 but got %d",
+				params.SgbApricotPhase5GasLimit, ethHeader.GasLimit,
 			)
+		}
+	} else {
+		if rules.IsApricotPhase1 {
+			if ethHeader.GasLimit != params.ApricotPhase1GasLimit {
+				return fmt.Errorf(
+					"expected gas limit to be %d after apricot phase 1 but got %d",
+					params.ApricotPhase1GasLimit, ethHeader.GasLimit,
+				)
+			}
 		}
 	}
 
