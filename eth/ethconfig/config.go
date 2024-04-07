@@ -83,15 +83,12 @@ func NewDefaultConfig() Config {
 func NewDefaultSgbConfig() Config {
 	return Config{
 		NetworkId:             1,
-		LightPeers:            100,
-		UltraLightFraction:    75,
-		DatabaseCache:         512,
 		TrieCleanCache:        256,
 		TrieDirtyCache:        256,
 		TrieDirtyCommitTarget: 20,
 		SnapshotCache:         128,
 		Miner:                 miner.Config{},
-		TxPool:                core.DefaultTxPoolConfig,
+		TxPool:                txpool.DefaultConfig,
 		RPCGasCap:             25000000,
 		RPCEVMTimeout:         5 * time.Second,
 		GPO:                   DefaultFullGPOSgbConfig,

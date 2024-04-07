@@ -254,14 +254,11 @@ func (evm *EVM) Interpreter() *EVMInterpreter {
 // snapshot in the event that the subsequent call to mint() in coreth/core/daemon.go fails.
 func (evm *EVM) DaemonCall(caller ContractRef, addr common.Address, input []byte, gas uint64) (snapshot int, ret []byte, leftOverGas uint64, err error) {
 	// Temporarily disable EVM debugging
-	oldDebug := evm.Config.Debug
-	oldInterpreterDebug := evm.interpreter.cfg.Debug
+	oldTracer := evm.Config.Tracer
 	defer func() {
-		evm.Config.Debug = oldDebug
-		evm.interpreter.cfg.Debug = oldInterpreterDebug
+		evm.Config.Tracer = oldTracer
 	}()
-	evm.Config.Debug = false
-	evm.interpreter.cfg.Debug = false
+	evm.Config.Tracer = nil
 
 	value := big.NewInt(0)
 	// Fail if we're trying to execute above the call depth limit
@@ -301,10 +298,10 @@ func (evm *EVM) CallWithoutSnapshot(caller ContractRef, addr common.Address, inp
 	if !evm.StateDB.Exist(addr) {
 		if !isPrecompile && evm.chainRules.IsEIP158 && value.Sign() == 0 {
 			// Calling a non existing account, don't do anything, but ping the tracer
-			if evm.Config.Debug {
+			if evm.Config.Tracer != nil {
 				if evm.depth == 0 {
 					evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, value)
-					evm.Config.Tracer.CaptureEnd(ret, 0, 0, nil)
+					evm.Config.Tracer.CaptureEnd(ret, 0, nil)
 				} else {
 					evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, value)
 					evm.Config.Tracer.CaptureExit(ret, 0, nil)
@@ -317,11 +314,11 @@ func (evm *EVM) CallWithoutSnapshot(caller ContractRef, addr common.Address, inp
 	evm.Context.Transfer(evm.StateDB, caller.Address(), addr, value)
 
 	// Capture the tracer start/end events in debug mode
-	if evm.Config.Debug {
+	if evm.Config.Tracer != nil {
 		if evm.depth == 0 {
 			evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, value)
 			defer func(startGas uint64, startTime time.Time) { // Lazy evaluation of the parameters
-				evm.Config.Tracer.CaptureEnd(ret, startGas-gas, time.Since(startTime), err)
+				evm.Config.Tracer.CaptureEnd(ret, startGas-gas, err)
 			}(gas, time.Now())
 		} else {
 			// Handle tracer events for entering and exiting a call frame
@@ -816,7 +813,7 @@ func (evm *EVM) NativeAssetCall(caller common.Address, input []byte, suppliedGas
 		return nil, 0, vmerrs.ErrOutOfGas
 	}
 	remainingGas = suppliedGas - gasCost
-	if evm.Context.Time.Cmp(constants.NativeAssetCallDeprecationTime) >= 0 {
+	if evm.Context.Time >= constants.NativeAssetCallDeprecationTime {
 		return nil, remainingGas, vmerrs.ErrNativeAssetCallDeprecated
 	}
 	return evm.NativeAssetCallDeprecated(caller, input, suppliedGas, gasCost, readOnly)

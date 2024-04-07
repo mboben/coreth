@@ -323,19 +323,17 @@ func makeHeader(chain consensus.ChainReader, config *params.ChainConfig, parent 
 	var gasLimit uint64
 	if config.IsSongbirdCode() {
 		// SGB-MERGE
-		if config.IsApricotPhase5(timestamp) {
+		if config.IsApricotPhase5(time) {
 			gasLimit = params.SgbApricotPhase5GasLimit
-		} else if config.IsApricotPhase1(timestamp) {
+		} else if config.IsApricotPhase1(time) {
 			gasLimit = params.ApricotPhase1GasLimit
 		} else {
 			gasLimit = CalcGasLimit(parent.GasUsed(), parent.GasLimit(), parent.GasLimit(), parent.GasLimit())
 		}
-	if config.IsCortina(time) {
-		gasLimit = params.CortinaGasLimit
-	} else if config.IsApricotPhase1(time) {
-		gasLimit = params.ApricotPhase1GasLimit
 	} else {
-		if config.IsApricotPhase1(timestamp) {
+		if config.IsCortina(time) {
+			gasLimit = params.CortinaGasLimit
+		} else if config.IsApricotPhase1(time) {
 			gasLimit = params.ApricotPhase1GasLimit
 		} else {
 			gasLimit = CalcGasLimit(parent.GasUsed(), parent.GasLimit(), parent.GasLimit(), parent.GasLimit())

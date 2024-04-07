@@ -106,7 +106,6 @@ var (
 		DAOForkBlock:                big.NewInt(0),
 		DAOForkSupport:              true,
 		EIP150Block:                 big.NewInt(0),
-		EIP150Hash:                  common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                 big.NewInt(0),
 		EIP158Block:                 big.NewInt(0),
 		ByzantiumBlock:              big.NewInt(0),
@@ -114,11 +113,11 @@ var (
 		PetersburgBlock:             big.NewInt(0),
 		IstanbulBlock:               big.NewInt(0),
 		MuirGlacierBlock:            big.NewInt(0),
-		ApricotPhase1BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp: utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase2BlockTimestamp: utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase3BlockTimestamp: utils.TimeToNewUint64(time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC)),
+		ApricotPhase4BlockTimestamp: utils.TimeToNewUint64(time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC)),
+		ApricotPhase5BlockTimestamp: utils.TimeToNewUint64(time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC)),
 	}
 
 	// SongbirdChainConfig is the configuration for the Songbird canary network.
@@ -128,7 +127,6 @@ var (
 		DAOForkBlock:                big.NewInt(0),
 		DAOForkSupport:              true,
 		EIP150Block:                 big.NewInt(0),
-		EIP150Hash:                  common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                 big.NewInt(0),
 		EIP158Block:                 big.NewInt(0),
 		ByzantiumBlock:              big.NewInt(0),
@@ -136,22 +134,13 @@ var (
 		PetersburgBlock:             big.NewInt(0),
 		IstanbulBlock:               big.NewInt(0),
 		MuirGlacierBlock:            big.NewInt(0),
-		ApricotPhase1BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp: big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp: utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase2BlockTimestamp: utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase3BlockTimestamp: utils.TimeToNewUint64(time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC)),
+		ApricotPhase4BlockTimestamp: utils.TimeToNewUint64(time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC)),
+		ApricotPhase5BlockTimestamp: utils.TimeToNewUint64(time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC)),
 	}
 
-	TestChainConfig          = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestLaunchConfig         = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil}
-	TestApricotPhase1Config  = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil}
-	TestApricotPhase2Config  = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
-	TestApricotPhase3Config  = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
-	TestApricotPhase4Config  = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
-	TestApricotPhase5Config  = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
-	TestBlueberryChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestRules                = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
 	TestLaunchConfig = &ChainConfig{
 		AvalancheContext:                AvalancheContext{utils.TestSnowContext()},
 		ChainID:                         big.NewInt(1),
@@ -1146,7 +1135,7 @@ func (c *ChainConfig) rules(num *big.Int, timestamp uint64) Rules {
 		IsIstanbul:       c.IsIstanbul(num),
 		IsCancun:         c.IsCancun(timestamp),
 
-		IsSongbirdCode:   c.IsSongbirdCode(),
+		IsSongbirdCode: c.IsSongbirdCode(),
 	}
 }
 
