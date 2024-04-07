@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Ignore warnings about variables appearing unused since this file is not the consumer of the variables it defines.
+# shellcheck disable=SC2034
+
+set -euo pipefail
+
 # Set the PATHS
 GOPATH="$(go env GOPATH)"
 
@@ -21,3 +26,9 @@ coreth_commit="$(git --git-dir="$CORETH_PATH/.git" rev-parse HEAD)"
 coreth_commit_id="${coreth_commit::8}"
 
 build_image_id=${BUILD_IMAGE_ID:-"$avalanche_version-$coreth_commit_id"}
+
+# Set the CGO flags to use the portable version of BLST
+#
+# We use "export" here instead of just setting a bash variable because we need
+# to pass this flag to all child processes spawned by the shell.
+export CGO_CFLAGS="-O -D__BLST_PORTABLE__"
