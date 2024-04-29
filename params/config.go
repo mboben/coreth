@@ -162,6 +162,28 @@ var (
 		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC).Unix()),
 	}
 
+	// LocalChainConfig is the configuration for the Songbird Local network.
+	LocalChainConfig = &ChainConfig{
+		ChainID:                     LocalChainID,
+		HomesteadBlock:              big.NewInt(0),
+		DAOForkBlock:                big.NewInt(0),
+		DAOForkSupport:              true,
+		EIP150Block:                 big.NewInt(0),
+		EIP150Hash:                  common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
+		EIP155Block:                 big.NewInt(0),
+		EIP158Block:                 big.NewInt(0),
+		ByzantiumBlock:              big.NewInt(0),
+		ConstantinopleBlock:         big.NewInt(0),
+		PetersburgBlock:             big.NewInt(0),
+		IstanbulBlock:               big.NewInt(0),
+		MuirGlacierBlock:            big.NewInt(0),
+		ApricotPhase1BlockTimestamp: big.NewInt(0),
+		ApricotPhase2BlockTimestamp: big.NewInt(0),
+		ApricotPhase3BlockTimestamp: big.NewInt(0),
+		ApricotPhase4BlockTimestamp: big.NewInt(0),
+		ApricotPhase5BlockTimestamp: big.NewInt(0),
+	}
+
 	// SongbirdChainConfig is the configuration for the Songbird canary network.
 	SongbirdChainConfig = &ChainConfig{
 		ChainID:                     SongbirdChainID,
@@ -290,7 +312,7 @@ func (c *ChainConfig) String() string {
 // SGB-MERGE
 // Code for songbird network (songbird, coston, local id)
 func (c *ChainConfig) IsSongbirdCode() bool {
-	return c.ChainID.Cmp(SongbirdChainID) == 0 || c.ChainID.Cmp(CostonChainID) == 0 || c.ChainID.Cmp(LocalChainID) == 0
+	return c.ChainID != nil && (c.ChainID.Cmp(SongbirdChainID) == 0 || c.ChainID.Cmp(CostonChainID) == 0 || c.ChainID.Cmp(LocalChainID) == 0)
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.
