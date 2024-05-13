@@ -49,4 +49,6 @@ var (
 	ErrNativeAssetCallDeprecated = errors.New("nativeAssetCall is deprecated")
 	ErrToAddrProhibited6        = errors.New("prohibited address cannot be called")
 	ErrToAddrProhibitedSoft     = errors.New("prohibited address cannot be called")
+	ErrToAddrProhibited6        = errors.New("prohibited address cannot be called")
+	ErrToAddrProhibitedSoft     = errors.New("prohibited address cannot be called")
 )

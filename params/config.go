@@ -82,63 +82,8 @@ var (
 		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(2022, time.September, 5, 1, 30, 0, 0, time.UTC).Unix()),
 		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2022, time.September, 6, 20, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2022, time.September, 7, 3, 0, 0, 0, time.UTC).Unix()),
-		// TODO Add Blueberry
-		// TODO Add Clementine
-	}
-
-	// AvalancheFujiChainConfig is the configuration for the Fuji Test Network
-	AvalancheFujiChainConfig = &ChainConfig{
-		ChainID:                         AvalancheFujiChainID,
-		HomesteadBlock:                  big.NewInt(0),
-		DAOForkBlock:                    big.NewInt(0),
-		DAOForkSupport:                  true,
-		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
-		EIP155Block:                     big.NewInt(0),
-		EIP158Block:                     big.NewInt(0),
-		ByzantiumBlock:                  big.NewInt(0),
-		ConstantinopleBlock:             big.NewInt(0),
-		PetersburgBlock:                 big.NewInt(0),
-		IstanbulBlock:                   big.NewInt(0),
-		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(time.Date(2021, time.March, 26, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp:     big.NewInt(time.Date(2021, time.May, 5, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp:     big.NewInt(time.Date(2021, time.August, 16, 19, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp:     big.NewInt(time.Date(2021, time.September, 16, 21, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp:     big.NewInt(time.Date(2021, time.November, 24, 15, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(2022, time.September, 6, 20, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2022, time.September, 6, 20, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2022, time.September, 7, 6, 0, 0, 0, time.UTC).Unix()),
-		// TODO Add Blueberry
-		// TODO Add Clementine
-	}
-
-	// AvalancheLocalChainConfig is the configuration for the Avalanche Local Network
-	AvalancheLocalChainConfig = &ChainConfig{
-		ChainID:                         AvalancheLocalChainID,
-		HomesteadBlock:                  big.NewInt(0),
-		DAOForkBlock:                    big.NewInt(0),
-		DAOForkSupport:                  true,
-		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
-		EIP155Block:                     big.NewInt(0),
-		EIP158Block:                     big.NewInt(0),
-		ByzantiumBlock:                  big.NewInt(0),
-		ConstantinopleBlock:             big.NewInt(0),
-		PetersburgBlock:                 big.NewInt(0),
-		IstanbulBlock:                   big.NewInt(0),
-		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(0),
-		ApricotPhase2BlockTimestamp:     big.NewInt(0),
-		ApricotPhase3BlockTimestamp:     big.NewInt(0),
-		ApricotPhase4BlockTimestamp:     big.NewInt(0),
-		ApricotPhase5BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(0),
-		ApricotPhase6BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
-		BlueberryBlockTimestamp:         big.NewInt(0),
-		ClementineBlockTimestamp:        big.NewInt(0),
-	}
+		BanffBlockTimestamp:             big.NewInt(time.Date(2022, time.October, 18, 16, 0, 0, 0, time.UTC).Unix()),
+		// TODO Add Banff and Cortina timestamps
 
 	// CostonChainConfig is the configuration for the Coston test network.
 	CostonChainConfig = &ChainConfig{
@@ -182,6 +127,11 @@ var (
 		ApricotPhase3BlockTimestamp: big.NewInt(0),
 		ApricotPhase4BlockTimestamp: big.NewInt(0),
 		ApricotPhase5BlockTimestamp: big.NewInt(0),
+		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(2022, time.September, 6, 20, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2022, time.September, 6, 20, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2022, time.September, 7, 6, 0, 0, 0, time.UTC).Unix()),
+		BanffBlockTimestamp:             big.NewInt(time.Date(2022, time.October, 3, 14, 0, 0, 0, time.UTC).Unix()),
+		// TODO add Cortina timestamp
 	}
 
 	// SongbirdChainConfig is the configuration for the Songbird canary network.
@@ -204,6 +154,10 @@ var (
 		ApricotPhase3BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhase4BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhase5BlockTimestamp: big.NewInt(time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhasePre6BlockTimestamp:  big.NewInt(0),
+		ApricotPhase6BlockTimestamp:     big.NewInt(0),
+		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
+		BanffBlockTimestamp:             big.NewInt(0),
 	}
 
 	TestChainConfig             = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
@@ -216,8 +170,8 @@ var (
 	TestApricotPhasePre6Config  = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
 	TestApricotPhase6Config     = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
 	TestApricotPhasePost6Config = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
-	TestBlueberryChainConfig    = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
-	TestClementineChainConfig   = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
+	TestBanffChainConfig        = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
+	TestCortinaChainConfig      = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
 	TestRules                   = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
 )
 
@@ -264,8 +218,10 @@ type ChainConfig struct {
 	ApricotPhase6BlockTimestamp *big.Int `json:"apricotPhase6BlockTimestamp,omitempty"`
 	// Apricot Phase Post-6 deprecates the NativeAssetCall precompile (soft). (nil = no fork, 0 = already activated)
 	ApricotPhasePost6BlockTimestamp *big.Int `json:"apricotPhasePost6BlockTimestamp,omitempty"`
-	// Blueberry TODO comment. (nil = no fork, 0 = already activated)
-	BlueberryBlockTimestamp *big.Int `json:"blueberryBlockTimestamp,omitempty"`
+	// Banff TODO comment. (nil = no fork, 0 = already activated)
+	BanffBlockTimestamp *big.Int `json:"banffBlockTimestamp,omitempty"`
+	// Cortina TODO comment. (nil = no fork, 0 = already activated)
+	CortinaBlockTimestamp *big.Int `json:"cortinaBlockTimestamp,omitempty"`
 	// Clementine TODO comment. (nil = no fork, 0 = already activated)
 	ClementineBlockTimestamp *big.Int `json:"clementineBlockTimestamp,omitempty"`
 }
@@ -303,8 +259,8 @@ func (c *ChainConfig) String() string {
 	banner += fmt.Sprintf(" - Apricot Phase P6 Timestamp        %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0)\n", c.ApricotPhasePre6BlockTimestamp)
 	banner += fmt.Sprintf(" - Apricot Phase 6 Timestamp:        %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0)\n", c.ApricotPhase6BlockTimestamp)
 	banner += fmt.Sprintf(" - Apricot Phase Post-6 Timestamp:   %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0\n", c.ApricotPhasePost6BlockTimestamp)
-	banner += fmt.Sprintf(" - Blueberry Timestamp:              %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.9.0)\n", c.BlueberryBlockTimestamp)
-	banner += fmt.Sprintf(" - Clementine Timestamp:             %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.10.0)\n", c.ClementineBlockTimestamp)
+	banner += fmt.Sprintf(" - Banff Timestamp:                  %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.9.0)\n", c.BanffBlockTimestamp)
+	banner += fmt.Sprintf(" - Cortina Timestamp:                %-8v (https://github.com/ava-labs/avalanchego/releases/tag/v1.10.0)\n", c.CortinaBlockTimestamp)
 	banner += "\n"
 	return banner
 }
@@ -417,33 +373,33 @@ func (c *ChainConfig) IsApricotPhasePost6(blockTimestamp *big.Int) bool {
 	return utils.IsForked(c.ApricotPhasePost6BlockTimestamp, blockTimestamp)
 }
 
-// IsBlueberry returns whether [blockTimestamp] represents a block
-// with a timestamp after the Blueberry upgrade time.
-func (c *ChainConfig) IsBlueberry(blockTimestamp *big.Int) bool {
-	return utils.IsForked(c.BlueberryBlockTimestamp, blockTimestamp)
+// IsBanff returns whether [blockTimestamp] represents a block
+// with a timestamp after the Banff upgrade time.
+func (c *ChainConfig) IsBanff(blockTimestamp *big.Int) bool {
+	return utils.IsForked(c.BanffBlockTimestamp, blockTimestamp)
 }
 
-// IsClementine returns whether [blockTimestamp] represents a block
-// with a timestamp after the Clementine upgrade time.
-func (c *ChainConfig) IsClementine(blockTimestamp *big.Int) bool {
-	return utils.IsForked(c.ClementineBlockTimestamp, blockTimestamp)
+// IsCortina returns whether [blockTimestamp] represents a block
+// with a timestamp after the Cortina upgrade time.
+func (c *ChainConfig) IsCortina(blockTimestamp *big.Int) bool {
+	return utils.IsForked(c.CortinaBlockTimestamp, blockTimestamp)
 }
 
 // CheckCompatible checks whether scheduled fork transitions have been imported
 // with a mismatching chain configuration.
 func (c *ChainConfig) CheckCompatible(newcfg *ChainConfig, height uint64, timestamp uint64) *ConfigCompatError {
-	bhead := new(big.Int).SetUint64(height)
-	bheadTimestamp := new(big.Int).SetUint64(timestamp)
+	bNumber := new(big.Int).SetUint64(height)
+	bTimestamp := new(big.Int).SetUint64(timestamp)
 
 	// Iterate checkCompatible to find the lowest conflict.
 	var lasterr *ConfigCompatError
 	for {
-		err := c.checkCompatible(newcfg, bhead, bheadTimestamp)
+		err := c.checkCompatible(newcfg, bNumber, bTimestamp)
 		if err == nil || (lasterr != nil && err.RewindTo == lasterr.RewindTo) {
 			break
 		}
 		lasterr = err
-		bhead.SetUint64(err.RewindTo)
+		bNumber.SetUint64(err.RewindTo)
 	}
 	return lasterr
 }
@@ -507,8 +463,8 @@ func (c *ChainConfig) CheckConfigForkOrder() error {
 		{name: "apricotPhasePre6BlockTimestamp", block: c.ApricotPhasePre6BlockTimestamp},
 		{name: "apricotPhase6BlockTimestamp", block: c.ApricotPhase6BlockTimestamp},
 		{name: "apricotPhasePost6BlockTimestamp", block: c.ApricotPhasePost6BlockTimestamp},
-		{name: "blueberryBlockTimestamp", block: c.BlueberryBlockTimestamp},
-		{name: "clementineBlockTimestamp", block: c.ClementineBlockTimestamp},
+		{name: "banffBlockTimestamp", block: c.BanffBlockTimestamp},
+		{name: "cortinaBlockTimestamp", block: c.CortinaBlockTimestamp},
 	} {
 		if lastFork.name != "" {
 			// Next one must be higher number
@@ -535,67 +491,71 @@ func (c *ChainConfig) CheckConfigForkOrder() error {
 	return nil
 }
 
-func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, headHeight *big.Int, headTimestamp *big.Int) *ConfigCompatError {
-	if isForkIncompatible(c.HomesteadBlock, newcfg.HomesteadBlock, headHeight) {
+func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, lastHeight *big.Int, lastTimestamp *big.Int) *ConfigCompatError {
+	if isForkIncompatible(c.HomesteadBlock, newcfg.HomesteadBlock, lastHeight) {
 		return newCompatError("Homestead fork block", c.HomesteadBlock, newcfg.HomesteadBlock)
 	}
-	if isForkIncompatible(c.DAOForkBlock, newcfg.DAOForkBlock, headHeight) {
+	if isForkIncompatible(c.DAOForkBlock, newcfg.DAOForkBlock, lastHeight) {
 		return newCompatError("DAO fork block", c.DAOForkBlock, newcfg.DAOForkBlock)
 	}
-	if c.IsDAOFork(headHeight) && c.DAOForkSupport != newcfg.DAOForkSupport {
+	if c.IsDAOFork(lastHeight) && c.DAOForkSupport != newcfg.DAOForkSupport {
 		return newCompatError("DAO fork support flag", c.DAOForkBlock, newcfg.DAOForkBlock)
 	}
-	if isForkIncompatible(c.EIP150Block, newcfg.EIP150Block, headHeight) {
+	if isForkIncompatible(c.EIP150Block, newcfg.EIP150Block, lastHeight) {
 		return newCompatError("EIP150 fork block", c.EIP150Block, newcfg.EIP150Block)
 	}
-	if isForkIncompatible(c.EIP155Block, newcfg.EIP155Block, headHeight) {
+	if isForkIncompatible(c.EIP155Block, newcfg.EIP155Block, lastHeight) {
 		return newCompatError("EIP155 fork block", c.EIP155Block, newcfg.EIP155Block)
 	}
-	if isForkIncompatible(c.EIP158Block, newcfg.EIP158Block, headHeight) {
+	if isForkIncompatible(c.EIP158Block, newcfg.EIP158Block, lastHeight) {
 		return newCompatError("EIP158 fork block", c.EIP158Block, newcfg.EIP158Block)
 	}
-	if c.IsEIP158(headHeight) && !configNumEqual(c.ChainID, newcfg.ChainID) {
+	if c.IsEIP158(lastHeight) && !configNumEqual(c.ChainID, newcfg.ChainID) {
 		return newCompatError("EIP158 chain ID", c.EIP158Block, newcfg.EIP158Block)
 	}
-	if isForkIncompatible(c.ByzantiumBlock, newcfg.ByzantiumBlock, headHeight) {
+	if isForkIncompatible(c.ByzantiumBlock, newcfg.ByzantiumBlock, lastHeight) {
 		return newCompatError("Byzantium fork block", c.ByzantiumBlock, newcfg.ByzantiumBlock)
 	}
-	if isForkIncompatible(c.ConstantinopleBlock, newcfg.ConstantinopleBlock, headHeight) {
+	if isForkIncompatible(c.ConstantinopleBlock, newcfg.ConstantinopleBlock, lastHeight) {
 		return newCompatError("Constantinople fork block", c.ConstantinopleBlock, newcfg.ConstantinopleBlock)
 	}
-	if isForkIncompatible(c.PetersburgBlock, newcfg.PetersburgBlock, headHeight) {
+	if isForkIncompatible(c.PetersburgBlock, newcfg.PetersburgBlock, lastHeight) {
 		// the only case where we allow Petersburg to be set in the past is if it is equal to Constantinople
 		// mainly to satisfy fork ordering requirements which state that Petersburg fork be set if Constantinople fork is set
-		if isForkIncompatible(c.ConstantinopleBlock, newcfg.PetersburgBlock, headHeight) {
+		if isForkIncompatible(c.ConstantinopleBlock, newcfg.PetersburgBlock, lastHeight) {
 			return newCompatError("Petersburg fork block", c.PetersburgBlock, newcfg.PetersburgBlock)
 		}
 	}
-	if isForkIncompatible(c.IstanbulBlock, newcfg.IstanbulBlock, headHeight) {
+	if isForkIncompatible(c.IstanbulBlock, newcfg.IstanbulBlock, lastHeight) {
 		return newCompatError("Istanbul fork block", c.IstanbulBlock, newcfg.IstanbulBlock)
 	}
-	if isForkIncompatible(c.MuirGlacierBlock, newcfg.MuirGlacierBlock, headHeight) {
+	if isForkIncompatible(c.MuirGlacierBlock, newcfg.MuirGlacierBlock, lastHeight) {
 		return newCompatError("Muir Glacier fork block", c.MuirGlacierBlock, newcfg.MuirGlacierBlock)
 	}
-	if isForkIncompatible(c.ApricotPhase1BlockTimestamp, newcfg.ApricotPhase1BlockTimestamp, headTimestamp) {
+	if isForkIncompatible(c.ApricotPhase1BlockTimestamp, newcfg.ApricotPhase1BlockTimestamp, lastTimestamp) {
 		return newCompatError("ApricotPhase1 fork block timestamp", c.ApricotPhase1BlockTimestamp, newcfg.ApricotPhase1BlockTimestamp)
 	}
-	if isForkIncompatible(c.ApricotPhase2BlockTimestamp, newcfg.ApricotPhase2BlockTimestamp, headTimestamp) {
+	if isForkIncompatible(c.ApricotPhase2BlockTimestamp, newcfg.ApricotPhase2BlockTimestamp, lastTimestamp) {
 		return newCompatError("ApricotPhase2 fork block timestamp", c.ApricotPhase2BlockTimestamp, newcfg.ApricotPhase2BlockTimestamp)
 	}
-	if isForkIncompatible(c.ApricotPhase3BlockTimestamp, newcfg.ApricotPhase3BlockTimestamp, headTimestamp) {
+	if isForkIncompatible(c.ApricotPhase3BlockTimestamp, newcfg.ApricotPhase3BlockTimestamp, lastTimestamp) {
 		return newCompatError("ApricotPhase3 fork block timestamp", c.ApricotPhase3BlockTimestamp, newcfg.ApricotPhase3BlockTimestamp)
 	}
-	if isForkIncompatible(c.ApricotPhase4BlockTimestamp, newcfg.ApricotPhase4BlockTimestamp, headTimestamp) {
+	if isForkIncompatible(c.ApricotPhase4BlockTimestamp, newcfg.ApricotPhase4BlockTimestamp, lastTimestamp) {
 		return newCompatError("ApricotPhase4 fork block timestamp", c.ApricotPhase4BlockTimestamp, newcfg.ApricotPhase4BlockTimestamp)
 	}
-	if isForkIncompatible(c.ApricotPhase5BlockTimestamp, newcfg.ApricotPhase5BlockTimestamp, headTimestamp) {
+	if isForkIncompatible(c.ApricotPhase5BlockTimestamp, newcfg.ApricotPhase5BlockTimestamp, lastTimestamp) {
 		return newCompatError("ApricotPhase5 fork block timestamp", c.ApricotPhase5BlockTimestamp, newcfg.ApricotPhase5BlockTimestamp)
 	}
 	// TODO: add Phase 6 checks
 
-	if isForkIncompatible(c.BlueberryBlockTimestamp, newcfg.BlueberryBlockTimestamp, headTimestamp) {
-		return newCompatError("Blueberry fork block timestamp", c.BlueberryBlockTimestamp, newcfg.BlueberryBlockTimestamp)
-	}
+	// TODO activate isForkIncompatible checks
+	// if isForkIncompatible(c.BanffBlockTimestamp, newcfg.BanffBlockTimestamp, lastTimestamp) {
+	// 	return newCompatError("Banff fork block timestamp", c.BanffBlockTimestamp, newcfg.BanffBlockTimestamp)
+	// }
+	// if isForkIncompatible(c.CortinaBlockTimestamp, newcfg.CortinaBlockTimestamp, lastTimestamp) {
+	// 	return newCompatError("Cortina fork block timestamp", c.CortinaBlockTimestamp, newcfg.CortinaBlockTimestamp)
+	// }
 	if isForkIncompatible(c.ClementineBlockTimestamp, newcfg.ClementineBlockTimestamp, headTimestamp) {
 		return newCompatError("Clementine fork block timestamp", c.ClementineBlockTimestamp, newcfg.ClementineBlockTimestamp)
 	}
@@ -662,7 +622,8 @@ type Rules struct {
 	// Rules for Avalanche releases
 	IsApricotPhase1, IsApricotPhase2, IsApricotPhase3, IsApricotPhase4, IsApricotPhase5 bool
 	IsApricotPhasePre6, IsApricotPhase6, IsApricotPhasePost6                            bool
-	IsBlueberry                                                                         bool
+	IsBanff                                                                             bool
+	IsCortina                                                                           bool
 	IsClementine                                                                        bool
 
 	// SGB-MERGE
@@ -709,7 +670,8 @@ func (c *ChainConfig) AvalancheRules(blockNum, blockTimestamp *big.Int) Rules {
 	rules.IsApricotPhasePre6 = c.IsApricotPhasePre6(blockTimestamp)
 	rules.IsApricotPhase6 = c.IsApricotPhase6(blockTimestamp)
 	rules.IsApricotPhasePost6 = c.IsApricotPhasePost6(blockTimestamp)
-	rules.IsBlueberry = c.IsBlueberry(blockTimestamp)
+	rules.IsBanff = c.IsBanff(blockTimestamp)
+	rules.IsCortina = c.IsCortina(blockTimestamp)
 	rules.IsClementine = c.IsClementine(blockTimestamp)
 
 	// Initialize the stateful precompiles that should be enabled at [blockTimestamp].
