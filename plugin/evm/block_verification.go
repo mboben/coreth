@@ -102,6 +102,15 @@ func (v blockValidator) SyntacticVerify(b *Block, rules params.Rules) error {
 	if rules.IsSongbirdCode {
 		// SGB-MERGE
 		if rules.IsApricotPhase5 && ethHeader.GasLimit != params.SgbApricotPhase5GasLimit {
+	if rules.IsCortina {
+		if ethHeader.GasLimit != params.CortinaGasLimit {
+			return fmt.Errorf(
+				"expected gas limit to be %d after cortina but got %d",
+				params.CortinaGasLimit, ethHeader.GasLimit,
+			)
+		}
+	} else if rules.IsApricotPhase1 {
+		if ethHeader.GasLimit != params.ApricotPhase1GasLimit {
 			return fmt.Errorf(
 				"expected gas limit to be %d in apricot phase 5 but got %d",
 				params.SgbApricotPhase5GasLimit, ethHeader.GasLimit,
@@ -252,16 +261,5 @@ func (v blockValidator) SyntacticVerify(b *Block, rules params.Rules) error {
 		}
 	}
 
-	if rules.IsCortina {
-		// In Cortina, ExtraStateRoot must not be empty (should contain the root of the atomic trie).
-		if ethHeader.ExtraStateRoot == (common.Hash{}) {
-			return fmt.Errorf("%w: ExtraStateRoot must not be empty", errInvalidExtraStateRoot)
-		}
-	} else {
-		// Before Cortina, ExtraStateRoot must be empty.
-		if ethHeader.ExtraStateRoot != (common.Hash{}) {
-			return fmt.Errorf("%w: ExtraStateRoot must be empty", errInvalidExtraStateRoot)
-		}
-	}
 	return nil
 }
