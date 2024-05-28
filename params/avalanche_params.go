@@ -21,7 +21,6 @@ const (
 	ApricotPhase1GasLimit uint64 = 8_000_000
 	CortinaGasLimit       uint64 = 15_000_000
 
-	// SGB-MERGE
 	SgbApricotPhase5GasLimit uint64 = 30_000_000
 
 	ApricotPhase3ExtraDataSize            uint64 = 80
