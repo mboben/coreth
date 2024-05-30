@@ -378,17 +378,23 @@ func (vm *VM) Initialize(
 	case g.Config.ChainID.Cmp(params.AvalancheMainnetChainID) == 0:
 		g.Config = params.AvalancheMainnetChainConfig
 		extDataHashes = mainnetExtDataHashes
+	case g.Config.ChainID.Cmp(params.FlareChainID) == 0:
+		g.Config = params.FlareChainConfig
+	case g.Config.ChainID.Cmp(params.SongbirdChainID) == 0:
+		g.Config = params.SongbirdChainConfig
+	case g.Config.ChainID.Cmp(params.CostwoChainID) == 0:
+		g.Config = params.CostwoChainConfig
+	case g.Config.ChainID.Cmp(params.CostonChainID) == 0:
+		g.Config = params.CostonChainConfig
+	case g.Config.ChainID.Cmp(params.LocalFlareChainID) == 0:
+		g.Config = params.LocalFlareChainConfig
+	case g.Config.ChainID.Cmp(params.LocalChainID) == 0:
+		g.Config = params.LocalChainConfig
 	case g.Config.ChainID.Cmp(params.AvalancheFujiChainID) == 0:
 		g.Config = params.AvalancheFujiChainConfig
 		extDataHashes = fujiExtDataHashes
 	case g.Config.ChainID.Cmp(params.AvalancheLocalChainID) == 0:
 		g.Config = params.AvalancheLocalChainConfig
-	case g.Config.ChainID.Cmp(params.CostonChainID) == 0:
-		g.Config = params.CostonChainConfig
-	case g.Config.ChainID.Cmp(params.SongbirdChainID) == 0:
-		g.Config = params.SongbirdChainConfig
-	case g.Config.ChainID.Cmp(params.LocalChainID) == 0:
-		g.Config = params.LocalChainConfig
 	}
 	vm.syntacticBlockValidator = NewBlockValidator(extDataHashes)
 
