@@ -451,7 +451,7 @@ func (vm *VM) Initialize(
 	}
 
 	var extDataHashes map[common.Hash]common.Hash
-	// Set the chain config for mainnet/fuji chain IDs
+	// Set the chain config for chain IDs
 	switch {
 	case g.Config.ChainID.Cmp(params.AvalancheMainnetChainID) == 0:
 		config := *params.AvalancheMainnetChainConfig
@@ -469,10 +469,6 @@ func (vm *VM) Initialize(
 		g.Config = params.LocalFlareChainConfig
 	case g.Config.ChainID.Cmp(params.LocalChainID) == 0:
 		g.Config = params.LocalChainConfig
-	case g.Config.ChainID.Cmp(params.AvalancheFujiChainID) == 0:
-		config := *params.AvalancheFujiChainConfig
-		g.Config = &config
-		extDataHashes = fujiExtDataHashes
 	case g.Config.ChainID.Cmp(params.AvalancheLocalChainID) == 0:
 		config := *params.AvalancheLocalChainConfig
 		g.Config = &config

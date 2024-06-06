@@ -20,11 +20,11 @@ import (
 
 var (
 	// Define activation times for submitter contract
-	submitterContractActivationTimeFlare  = big.NewInt(time.Date(2024, time.March, 26, 12, 0, 0, 0, time.UTC).Unix())
-	submitterContractActivationTimeCostwo = big.NewInt(time.Date(2024, time.February, 21, 14, 0, 0, 0, time.UTC).Unix())
+	submitterContractActivationTimeFlare  = uint64(time.Date(2024, time.March, 26, 12, 0, 0, 0, time.UTC).Unix())
+	submitterContractActivationTimeCostwo = uint64(time.Date(2024, time.February, 21, 14, 0, 0, 0, time.UTC).Unix())
 
-	submitterContractActivationTimeSongbird = big.NewInt(time.Date(2024, time.March, 15, 12, 0, 0, 0, time.UTC).Unix())
-	submitterContractActivationTimeCoston   = big.NewInt(time.Date(2024, time.February, 29, 12, 0, 0, 0, time.UTC).Unix())
+	submitterContractActivationTimeSongbird = uint64(time.Date(2024, time.March, 15, 12, 0, 0, 0, time.UTC).Unix())
+	submitterContractActivationTimeCoston   = uint64(time.Date(2024, time.February, 29, 12, 0, 0, 0, time.UTC).Unix())
 
 	// Define ftso and submitter contract addresses
 	prioritisedFTSOContractAddress = common.HexToAddress("0x1000000000000000000000000000000000000003")
@@ -34,14 +34,14 @@ var (
 )
 
 type prioritisedParams struct {
-	submitterActivationTime *big.Int
+	submitterActivationTime uint64
 	submitterAddress        common.Address
 	maxGasLimit             uint64
 }
 
 var (
 	prioritisedContractVariants = utils.NewChainValue(&prioritisedParams{
-		big.NewInt(0), common.Address{}, 0,
+		0, common.Address{}, 0,
 	}).
 		AddValue(params.FlareChainID, &prioritisedParams{
 			submitterContractActivationTimeFlare,
@@ -64,17 +64,17 @@ var (
 			math.MaxUint64,
 		}).
 		AddValue(params.LocalFlareChainID, &prioritisedParams{
-			big.NewInt(0),
+			0,
 			prioritisedSubmitterContractAddressEnv,
 			3000000,
 		}).
 		AddValue(params.StagingChainID, &prioritisedParams{
-			big.NewInt(0),
+			0,
 			prioritisedSubmitterContractAddressEnv,
 			3000000,
 		}).
 		AddValue(params.LocalChainID, &prioritisedParams{
-			big.NewInt(0),
+			0,
 			prioritisedSubmitterContractAddressEnv,
 			math.MaxUint64,
 		})
@@ -107,34 +107,34 @@ type EVMCaller interface {
 	GetChainID() *big.Int
 	DaemonCall(caller vm.ContractRef, addr common.Address, input []byte, gas uint64) (snapshot int, ret []byte, leftOverGas uint64, err error)
 	DaemonRevertToSnapshot(snapshot int)
-	GetBlockTime() *big.Int
+	GetBlockTime() uint64
 	GetGasLimit() uint64
 	AddBalance(addr common.Address, amount *big.Int)
 }
 
-func GetDaemonGasMultiplier(blockTime *big.Int) uint64 {
+func GetDaemonGasMultiplier(blockTime uint64) uint64 {
 	switch {
 	default:
 		return 100
 	}
 }
 
-func GetDaemonContractAddr(blockTime *big.Int) string {
+func GetDaemonContractAddr(blockTime uint64) string {
 	switch {
 	default:
 		return "0x1000000000000000000000000000000000000002"
 	}
 }
 
-func GetDaemonSelector(blockTime *big.Int) []byte {
+func GetDaemonSelector(blockTime uint64) []byte {
 	switch {
 	default:
 		return []byte{0x7f, 0xec, 0x8d, 0x38}
 	}
 }
 
-func IsPrioritisedContractCall(chainID *big.Int, blockTime *big.Int, to *common.Address, ret []byte, initialGas uint64) bool {
-	if to == nil || chainID == nil || blockTime == nil {
+func IsPrioritisedContractCall(chainID *big.Int, blockTime uint64, to *common.Address, ret []byte, initialGas uint64) bool {
+	if to == nil || chainID == nil {
 		return false
 	}
 
@@ -145,14 +145,14 @@ func IsPrioritisedContractCall(chainID *big.Int, blockTime *big.Int, to *common.
 		return false
 	case *to == prioritisedFTSOContractAddress:
 		return true
-	case *to == chainValue.submitterAddress && blockTime.Cmp(chainValue.submitterActivationTime) > 0 && !isZeroSlice(ret):
+	case *to == chainValue.submitterAddress && blockTime > chainValue.submitterActivationTime && !isZeroSlice(ret):
 		return true
 	default:
 		return false
 	}
 }
 
-func GetMaximumMintRequest(chainID *big.Int, blockTime *big.Int) *big.Int {
+func GetMaximumMintRequest(chainID *big.Int, blockTime uint64) *big.Int {
 	switch {
 	case chainID.Cmp(params.FlareChainID) == 0 || chainID.Cmp(params.CostwoChainID) == 0 || chainID.Cmp(params.LocalFlareChainID) == 0 || chainID.Cmp(params.StagingChainID) == 0:
 		maxRequest, _ := new(big.Int).SetString("60000000000000000000000000", 10)

@@ -66,9 +66,6 @@ var (
 	// AvalancheMainnetChainConfig is the configuration for Avalanche Main Network
 	AvalancheMainnetChainConfig = getChainConfig(constants.MainnetID, AvalancheMainnetChainID)
 
-	// AvalancheFujiChainConfig is the configuration for the Fuji Test Network
-	AvalancheFujiChainConfig = getChainConfig(constants.FujiID, AvalancheFujiChainID)
-
 	// AvalancheLocalChainConfig is the configuration for the Avalanche Local Network
 	AvalancheLocalChainConfig = getChainConfig(constants.LocalID, AvalancheLocalChainID)
 
@@ -453,13 +450,13 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 	}
 }
 
+var (
 	FlareChainConfig = &ChainConfig{
 		ChainID:                         FlareChainID,
 		HomesteadBlock:                  big.NewInt(0),
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -467,15 +464,15 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(0),
-		ApricotPhase2BlockTimestamp:     big.NewInt(0),
-		ApricotPhase3BlockTimestamp:     big.NewInt(0),
-		ApricotPhase4BlockTimestamp:     big.NewInt(0),
-		ApricotPhase5BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		BanffBlockTimestamp:             big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase2BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase3BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase4BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase5BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	CostwoChainConfig = &ChainConfig{
@@ -484,7 +481,6 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -492,15 +488,15 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(0),
-		ApricotPhase2BlockTimestamp:     big.NewInt(0),
-		ApricotPhase3BlockTimestamp:     big.NewInt(0),
-		ApricotPhase4BlockTimestamp:     big.NewInt(0),
-		ApricotPhase5BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		BanffBlockTimestamp:             big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase2BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase3BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase4BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase5BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	StagingChainConfig = &ChainConfig{
@@ -509,7 +505,6 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -517,15 +512,15 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(0),
-		ApricotPhase2BlockTimestamp:     big.NewInt(0),
-		ApricotPhase3BlockTimestamp:     big.NewInt(0),
-		ApricotPhase4BlockTimestamp:     big.NewInt(0),
-		ApricotPhase5BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		BanffBlockTimestamp:             big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase2BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase3BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase4BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase5BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	LocalFlareChainConfig = &ChainConfig{
@@ -534,7 +529,6 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -542,15 +536,15 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(0),
-		ApricotPhase2BlockTimestamp:     big.NewInt(0),
-		ApricotPhase3BlockTimestamp:     big.NewInt(0),
-		ApricotPhase4BlockTimestamp:     big.NewInt(0),
-		ApricotPhase5BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(0),
-		ApricotPhase6BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
-		BanffBlockTimestamp:             big.NewInt(0),
+		ApricotPhase1BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase2BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase3BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase4BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase5BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePre6BlockTimestamp:  utils.NewUint64(0),
+		ApricotPhase6BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePost6BlockTimestamp: utils.NewUint64(0),
+		BanffBlockTimestamp:             utils.NewUint64(0),
 	}
 
 	// CostonChainConfig is the configuration for the Coston test network.
@@ -560,7 +554,6 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -568,15 +561,15 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp:     big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp:     big.NewInt(time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp:     big.NewInt(time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp:     big.NewInt(time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		BanffBlockTimestamp:             big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp:     utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase2BlockTimestamp:     utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase3BlockTimestamp:     utils.TimeToNewUint64(time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC)),
+		ApricotPhase4BlockTimestamp:     utils.TimeToNewUint64(time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC)),
+		ApricotPhase5BlockTimestamp:     utils.TimeToNewUint64(time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC)),
+		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	// LocalChainConfig is the configuration for the Songbird Local network.
@@ -586,7 +579,6 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -594,15 +586,15 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(0),
-		ApricotPhase2BlockTimestamp:     big.NewInt(0),
-		ApricotPhase3BlockTimestamp:     big.NewInt(0),
-		ApricotPhase4BlockTimestamp:     big.NewInt(0),
-		ApricotPhase5BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(0),
-		ApricotPhase6BlockTimestamp:     big.NewInt(0),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
-		BanffBlockTimestamp:             big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase2BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase3BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase4BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhase5BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePre6BlockTimestamp:  utils.NewUint64(0),
+		ApricotPhase6BlockTimestamp:     utils.NewUint64(0),
+		ApricotPhasePost6BlockTimestamp: utils.NewUint64(0),
+		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		// TODO add Cortina timestamp
 	}
 
@@ -613,7 +605,6 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		DAOForkBlock:                    big.NewInt(0),
 		DAOForkSupport:                  true,
 		EIP150Block:                     big.NewInt(0),
-		EIP150Hash:                      common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
 		EIP155Block:                     big.NewInt(0),
 		EIP158Block:                     big.NewInt(0),
 		ByzantiumBlock:                  big.NewInt(0),
@@ -621,32 +612,33 @@ func getChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:                 big.NewInt(0),
 		IstanbulBlock:                   big.NewInt(0),
 		MuirGlacierBlock:                big.NewInt(0),
-		ApricotPhase1BlockTimestamp:     big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase2BlockTimestamp:     big.NewInt(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase3BlockTimestamp:     big.NewInt(time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase4BlockTimestamp:     big.NewInt(time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase5BlockTimestamp:     big.NewInt(time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePre6BlockTimestamp:  big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
-		BanffBlockTimestamp:             big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
+		ApricotPhase1BlockTimestamp:     utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase2BlockTimestamp:     utils.TimeToNewUint64(time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase3BlockTimestamp:     utils.TimeToNewUint64(time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC)),
+		ApricotPhase4BlockTimestamp:     utils.TimeToNewUint64(time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC)),
+		ApricotPhase5BlockTimestamp:     utils.TimeToNewUint64(time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC)),
+		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
-	TestChainConfig             = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestLaunchConfig            = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase1Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase2Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase3Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase4Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase5Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil}
-	TestApricotPhasePre6Config  = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil}
-	TestApricotPhase6Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
-	TestApricotPhasePost6Config = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
-	TestBanffChainConfig        = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
-	TestCortinaChainConfig      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
-	TestDUpgradeChainConfig     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestRules                   = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
+	// TestChainConfig             = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
+	// TestLaunchConfig            = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
+	// TestApricotPhase1Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
+	// TestApricotPhase2Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil}
+	// TestApricotPhase3Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil}
+	// TestApricotPhase4Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil}
+	// TestApricotPhase5Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil}
+	// TestApricotPhasePre6Config  = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil}
+	// TestApricotPhase6Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
+	// TestApricotPhasePost6Config = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
+	// TestBanffChainConfig        = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
+	// TestCortinaChainConfig      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
+	// TestDUpgradeChainConfig     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
+	// TestRules                   = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
 )
+
 func getUpgradeTime(networkID uint32, upgradeTimes map[uint32]time.Time) *uint64 {
 	if upgradeTime, ok := upgradeTimes[networkID]; ok {
 		return utils.TimeToNewUint64(upgradeTime)
@@ -1246,10 +1238,9 @@ type Rules struct {
 	IsCortina                                                                           bool
 	IsDurango                                                                           bool
 
-	// SGB-MERGE
 	// Songbird (coston, local)
 	IsSongbirdCode bool
-	x
+
 	// Precompiles maps addresses to stateful precompiled contracts that are enabled
 	// ActivePrecompiles maps addresses to stateful precompiled contracts that are enabled
 	// for this rule set.
@@ -1288,7 +1279,7 @@ func (c *ChainConfig) rules(num *big.Int, timestamp uint64) Rules {
 		IsIstanbul:       c.IsIstanbul(num),
 		IsCancun:         c.IsCancun(timestamp),
 
-		IsSongbirdCode:   c.IsSongbirdCode(),
+		IsSongbirdCode: c.IsSongbirdCode(),
 	}
 }
 

@@ -89,7 +89,7 @@ func NewDefaultSgbConfig() Config {
 		SnapshotCache:         256,
 		AcceptedCacheSize:     32,
 		Miner:                 miner.Config{},
-		TxPool:                core.DefaultTxPoolConfig,
+		TxPool:                txpool.DefaultConfig,
 		RPCGasCap:             25000000,
 		RPCEVMTimeout:         5 * time.Second,
 		GPO:                   DefaultFullGPOSgbConfig,
