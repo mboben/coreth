@@ -78,6 +78,10 @@ func (utx *UnsignedExportTx) Verify(
 		return errWrongBlockchainID
 	}
 
+	if rules.IsSongbirdCode && !rules.IsSongbirdTransition {
+		return errExportTxsDisabled
+	}
+
 	// Make sure that the tx has a valid peer chain ID
 	if rules.IsApricotPhase5 {
 		// Note that SameSubnet verifies that [tx.DestinationChain] isn't this
