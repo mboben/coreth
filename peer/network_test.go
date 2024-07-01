@@ -503,49 +503,6 @@ func TestOnRequestHonoursDeadline(t *testing.T) {
 	assert.EqualValues(t, requestHandler.calls, 1)
 }
 
-func TestGossip(t *testing.T) {
-	codecManager := buildCodec(t, HelloGossip{})
-	crossChainCodecManager := buildCodec(t, ExampleCrossChainRequest{}, ExampleCrossChainResponse{})
-
-	nodeID := ids.GenerateTestNodeID()
-	var clientNetwork Network
-	wg := &sync.WaitGroup{}
-	sentGossip := false
-	wg.Add(1)
-	sender := testAppSender{
-		sendAppGossipFn: func(msg []byte) error {
-			go func() {
-				defer wg.Done()
-				err := clientNetwork.AppGossip(context.Background(), nodeID, msg)
-				assert.NoError(t, err)
-			}()
-			sentGossip = true
-			return nil
-		},
-	}
-
-	gossipHandler := &testGossipHandler{}
-	p2pNetwork, err := p2p.NewNetwork(logging.NoLog{}, nil, prometheus.NewRegistry(), "")
-	require.NoError(t, err)
-	clientNetwork = NewNetwork(p2pNetwork, sender, codecManager, crossChainCodecManager, ids.EmptyNodeID, 1, 1)
-	clientNetwork.SetGossipHandler(gossipHandler)
-
-	assert.NoError(t, clientNetwork.Connected(context.Background(), nodeID, defaultPeerVersion))
-
-	client := NewNetworkClient(clientNetwork)
-	defer clientNetwork.Shutdown()
-
-	b, err := buildGossip(codecManager, HelloGossip{Msg: "hello there!"})
-	assert.NoError(t, err)
-
-	err = client.Gossip(b)
-	assert.NoError(t, err)
-
-	wg.Wait()
-	assert.True(t, sentGossip)
-	assert.True(t, gossipHandler.received)
-}
-
 func TestHandleInvalidMessages(t *testing.T) {
 	codecManager := buildCodec(t, HelloGossip{}, TestMessage{})
 	crossChainCodecManager := buildCodec(t, ExampleCrossChainRequest{}, ExampleCrossChainResponse{})
@@ -887,7 +844,7 @@ func TestNetworkRouting(t *testing.T) {
 
 func buildCodec(t *testing.T, types ...interface{}) codec.Manager {
 	codecManager := codec.NewDefaultManager()
-	c := linearcodec.NewDefault(time.Time{})
+	c := linearcodec.NewDefault()
 	for _, typ := range types {
 		assert.NoError(t, c.RegisterType(typ))
 	}
@@ -914,7 +871,7 @@ type testAppSender struct {
 	sendCrossChainAppResponseFn func(ids.ID, uint32, []byte) error
 	sendAppRequestFn            func(context.Context, set.Set[ids.NodeID], uint32, []byte) error
 	sendAppResponseFn           func(ids.NodeID, uint32, []byte) error
-	sendAppGossipFn             func([]byte) error
+	sendAppGossipFn             func(common.SendConfig, []byte) error
 }
 
 func (t testAppSender) SendCrossChainAppRequest(_ context.Context, chainID ids.ID, requestID uint32, appRequestBytes []byte) error {
@@ -925,10 +882,6 @@ func (t testAppSender) SendCrossChainAppResponse(_ context.Context, chainID ids.
 	return t.sendCrossChainAppResponseFn(chainID, requestID, appResponseBytes)
 }
 
-func (t testAppSender) SendAppGossipSpecific(context.Context, set.Set[ids.NodeID], []byte) error {
-	panic("not implemented")
-}
-
 func (t testAppSender) SendAppRequest(ctx context.Context, nodeIDs set.Set[ids.NodeID], requestID uint32, message []byte) error {
 	return t.sendAppRequestFn(ctx, nodeIDs, requestID, message)
 }
@@ -937,8 +890,16 @@ func (t testAppSender) SendAppResponse(_ context.Context, nodeID ids.NodeID, req
 	return t.sendAppResponseFn(nodeID, requestID, message)
 }
 
-func (t testAppSender) SendAppGossip(_ context.Context, message []byte) error {
-	return t.sendAppGossipFn(message)
+func (t testAppSender) SendAppGossip(_ context.Context, config common.SendConfig, message []byte) error {
+	return t.sendAppGossipFn(config, message)
+}
+
+func (t testAppSender) SendAppError(ctx context.Context, nodeID ids.NodeID, requestID uint32, errorCode int32, errorMessage string) error {
+	panic("not implemented")
+}
+
+func (t testAppSender) SendCrossChainAppError(ctx context.Context, chainID ids.ID, requestID uint32, errorCode int32, errorMessage string) error {
+	panic("not implemented")
 }
 
 type HelloRequest struct {

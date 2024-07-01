@@ -7,10 +7,12 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/ava-labs/avalanchego/ids"
 	"github.com/ava-labs/avalanchego/utils/logging"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -20,7 +22,10 @@ import (
 	"github.com/ava-labs/coreth/core"
 	"github.com/ava-labs/coreth/core/txpool"
 	"github.com/ava-labs/coreth/core/types"
+	"github.com/ava-labs/coreth/eth"
 )
+
+const pendingTxsBuffer = 10
 
 var (
 	_ p2p.Handler = (*txGossipHandler)(nil)
@@ -30,6 +35,8 @@ var (
 	_ gossip.Marshaller[*GossipAtomicTx] = (*GossipAtomicTxMarshaller)(nil)
 	_ gossip.Marshaller[*GossipEthTx]    = (*GossipEthTxMarshaller)(nil)
 	_ gossip.Set[*GossipEthTx]           = (*GossipEthTxPool)(nil)
+
+	_ eth.PushGossiper = (*EthPushGossiper)(nil)
 )
 
 func newTxGossipHandler[T gossip.Gossipable](
@@ -43,11 +50,9 @@ func newTxGossipHandler[T gossip.Gossipable](
 	validators *p2p.Validators,
 ) txGossipHandler {
 	// push gossip messages can be handled from any peer
-	handler := gossip.NewHandler[T](
+	handler := gossip.NewHandler(
 		log,
 		marshaller,
-		// Don't forward gossip to avoid double-forwarding
-		gossip.NoOpAccumulator[T]{},
 		mempool,
 		metrics,
 		maxMessageSize,
@@ -117,7 +122,7 @@ func NewGossipEthTxPool(mempool *txpool.TxPool, registerer prometheus.Registerer
 
 	return &GossipEthTxPool{
 		mempool:    mempool,
-		pendingTxs: make(chan core.NewTxsEvent),
+		pendingTxs: make(chan core.NewTxsEvent, pendingTxsBuffer),
 		bloom:      bloom,
 	}, nil
 }
@@ -128,10 +133,28 @@ type GossipEthTxPool struct {
 
 	bloom *gossip.BloomFilter
 	lock  sync.RWMutex
+
+	// subscribed is set to true when the gossip subscription is active
+	// mostly used for testing
+	subscribed atomic.Bool
+}
+
+// IsSubscribed returns whether or not the gossip subscription is active.
+func (g *GossipEthTxPool) IsSubscribed() bool {
+	return g.subscribed.Load()
 }
 
 func (g *GossipEthTxPool) Subscribe(ctx context.Context) {
-	g.mempool.SubscribeNewTxsEvent(g.pendingTxs)
+	sub := g.mempool.SubscribeTransactions(g.pendingTxs, false)
+	if sub == nil {
+		log.Warn("failed to subscribe to new txs event")
+		return
+	}
+	g.subscribed.CompareAndSwap(false, true)
+	defer func() {
+		sub.Unsubscribe()
+		g.subscribed.CompareAndSwap(true, false)
+	}()
 
 	for {
 		select {
@@ -167,7 +190,13 @@ func (g *GossipEthTxPool) Subscribe(ctx context.Context) {
 // Add enqueues the transaction to the mempool. Subscribe should be called
 // to receive an event if tx is actually added to the mempool or not.
 func (g *GossipEthTxPool) Add(tx *GossipEthTx) error {
-	return g.mempool.AddRemotes([]*types.Transaction{tx.Tx})[0]
+	return g.mempool.Add([]*types.Transaction{tx.Tx}, false, false)[0]
+}
+
+// Has should just return whether or not the [txID] is still in the mempool,
+// not whether it is in the mempool AND pending.
+func (g *GossipEthTxPool) Has(txID ids.ID) bool {
+	return g.mempool.Has(common.Hash(txID))
 }
 
 func (g *GossipEthTxPool) Iterate(f func(tx *GossipEthTx) bool) {
@@ -203,4 +232,20 @@ type GossipEthTx struct {
 
 func (tx *GossipEthTx) GossipID() ids.ID {
 	return ids.ID(tx.Tx.Hash())
+}
+
+// EthPushGossiper is used by the ETH backend to push transactions issued over
+// the RPC and added to the mempool to peers.
+type EthPushGossiper struct {
+	vm *VM
+}
+
+func (e *EthPushGossiper) Add(tx *types.Transaction) {
+	// eth.Backend is initialized before the [ethTxPushGossiper] is created, so
+	// we just ignore any gossip requests until it is set.
+	ethTxPushGossiper := e.vm.ethTxPushGossiper.Get()
+	if ethTxPushGossiper == nil {
+		return
+	}
+	ethTxPushGossiper.Add(&GossipEthTx{tx})
 }

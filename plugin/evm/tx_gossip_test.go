@@ -93,7 +93,12 @@ func TestEthTxGossip(t *testing.T) {
 		return 0, nil
 	}
 	validatorState.GetValidatorSetF = func(context.Context, uint64, ids.ID) (map[ids.NodeID]*validators.GetValidatorOutput, error) {
-		return map[ids.NodeID]*validators.GetValidatorOutput{requestingNodeID: nil}, nil
+		return map[ids.NodeID]*validators.GetValidatorOutput{
+			requestingNodeID: {
+				NodeID: requestingNodeID,
+				Weight: 1,
+			},
+		}, nil
 	}
 
 	// Ask the VM for any new transactions. We should get nothing at first.
@@ -128,7 +133,7 @@ func TestEthTxGossip(t *testing.T) {
 	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(vm.chainID), pk.ToECDSA())
 	require.NoError(err)
 
-	errs := vm.txPool.AddLocals([]*types.Transaction{signedTx})
+	errs := vm.txPool.Add([]*types.Transaction{signedTx}, true, true)
 	require.Len(errs, 1)
 	require.Nil(errs[0])
 
@@ -220,7 +225,12 @@ func TestAtomicTxGossip(t *testing.T) {
 		return 0, nil
 	}
 	validatorState.GetValidatorSetF = func(context.Context, uint64, ids.ID) (map[ids.NodeID]*validators.GetValidatorOutput, error) {
-		return map[ids.NodeID]*validators.GetValidatorOutput{requestingNodeID: nil}, nil
+		return map[ids.NodeID]*validators.GetValidatorOutput{
+			requestingNodeID: {
+				NodeID: requestingNodeID,
+				Weight: 1,
+			},
+		}, nil
 	}
 
 	// Ask the VM for any new transactions. We should get nothing at first.
@@ -296,6 +306,14 @@ func TestEthTxPushGossipOutbound(t *testing.T) {
 	require := require.New(t)
 	ctx := context.Background()
 	snowCtx := utils.TestSnowContext()
+	snowCtx.ValidatorState = &validators.TestState{
+		GetCurrentHeightF: func(context.Context) (uint64, error) {
+			return 0, nil
+		},
+		GetValidatorSetF: func(context.Context, uint64, ids.ID) (map[ids.NodeID]*validators.GetValidatorOutput, error) {
+			return nil, nil
+		},
+	}
 	sender := &common.FakeSender{
 		SentAppGossip: make(chan []byte, 1),
 	}
@@ -322,16 +340,21 @@ func TestEthTxPushGossipOutbound(t *testing.T) {
 		nil,
 		make(chan common.Message),
 		nil,
-		&common.FakeSender{},
+		sender,
 	))
 	require.NoError(vm.SetState(ctx, snow.NormalOp))
+
+	defer func() {
+		require.NoError(vm.Shutdown(ctx))
+	}()
 
 	tx := types.NewTransaction(0, address, big.NewInt(10), 100_000, big.NewInt(params.LaunchMinGasPrice), nil)
 	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(vm.chainID), pk.ToECDSA())
 	require.NoError(err)
 
 	// issue a tx
-	require.NoError(vm.txPool.AddLocal(signedTx))
+	require.NoError(vm.txPool.Add([]*types.Transaction{signedTx}, true, true)[0])
+	vm.ethTxPushGossiper.Get().Add(&GossipEthTx{signedTx})
 
 	sent := <-sender.SentAppGossip
 	got := &sdk.PushGossip{}
@@ -354,9 +377,7 @@ func TestEthTxPushGossipInbound(t *testing.T) {
 	ctx := context.Background()
 	snowCtx := utils.TestSnowContext()
 
-	sender := &common.FakeSender{
-		SentAppGossip: make(chan []byte, 1),
-	}
+	sender := &common.SenderTest{}
 	vm := &VM{
 		p2pSender:            sender,
 		ethTxPullGossiper:    gossip.NoOpGossiper{},
@@ -379,9 +400,13 @@ func TestEthTxPushGossipInbound(t *testing.T) {
 		nil,
 		make(chan common.Message),
 		nil,
-		&common.FakeSender{},
+		sender,
 	))
 	require.NoError(vm.SetState(ctx, snow.NormalOp))
+
+	defer func() {
+		require.NoError(vm.Shutdown(ctx))
+	}()
 
 	tx := types.NewTransaction(0, address, big.NewInt(10), 100_000, big.NewInt(params.LaunchMinGasPrice), nil)
 	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(vm.chainID), pk.ToECDSA())
@@ -404,16 +429,6 @@ func TestEthTxPushGossipInbound(t *testing.T) {
 	inboundGossipMsg := append(binary.AppendUvarint(nil, ethTxGossipProtocol), inboundGossipBytes...)
 	require.NoError(vm.AppGossip(ctx, ids.EmptyNodeID, inboundGossipMsg))
 
-	forwardedMsg := &sdk.PushGossip{}
-	outboundGossipBytes := <-sender.SentAppGossip
-
-	require.Equal(byte(ethTxGossipProtocol), outboundGossipBytes[0])
-	require.NoError(proto.Unmarshal(outboundGossipBytes[1:], forwardedMsg))
-	require.Len(forwardedMsg.Gossip, 1)
-
-	forwardedTx, err := marshaller.UnmarshalGossip(forwardedMsg.Gossip[0])
-	require.NoError(err)
-	require.Equal(gossipedTx.GossipID(), forwardedTx.GossipID())
 	require.True(vm.txPool.Has(signedTx.Hash()))
 }
 
@@ -462,6 +477,10 @@ func TestAtomicTxPushGossipOutbound(t *testing.T) {
 	))
 	require.NoError(vm.SetState(ctx, snow.NormalOp))
 
+	defer func() {
+		require.NoError(vm.Shutdown(ctx))
+	}()
+
 	// Issue a tx to the VM
 	utxo, err := addUTXO(
 		memory,
@@ -476,6 +495,7 @@ func TestAtomicTxPushGossipOutbound(t *testing.T) {
 	tx, err := vm.newImportTxWithUTXOs(vm.ctx.XChainID, address, initialBaseFee, secp256k1fx.NewKeychain(pk), []*avax.UTXO{utxo})
 	require.NoError(err)
 	require.NoError(vm.mempool.AddLocalTx(tx))
+	vm.atomicTxPushGossiper.Add(&GossipAtomicTx{tx})
 
 	gossipedBytes := <-sender.SentAppGossip
 	require.Equal(byte(atomicTxGossipProtocol), gossipedBytes[0])
@@ -513,9 +533,7 @@ func TestAtomicTxPushGossipInbound(t *testing.T) {
 	genesisBytes, err := genesis.MarshalJSON()
 	require.NoError(err)
 
-	sender := &common.FakeSender{
-		SentAppGossip: make(chan []byte, 1),
-	}
+	sender := &common.SenderTest{}
 	vm := &VM{
 		p2pSender:            sender,
 		ethTxPullGossiper:    gossip.NoOpGossiper{},
@@ -534,6 +552,10 @@ func TestAtomicTxPushGossipInbound(t *testing.T) {
 		&common.FakeSender{},
 	))
 	require.NoError(vm.SetState(ctx, snow.NormalOp))
+
+	defer func() {
+		require.NoError(vm.Shutdown(ctx))
+	}()
 
 	// issue a tx to the vm
 	utxo, err := addUTXO(
@@ -566,16 +588,5 @@ func TestAtomicTxPushGossipInbound(t *testing.T) {
 	inboundGossipMsg := append(binary.AppendUvarint(nil, atomicTxGossipProtocol), inboundGossipBytes...)
 
 	require.NoError(vm.AppGossip(ctx, ids.EmptyNodeID, inboundGossipMsg))
-
-	forwardedBytes := <-sender.SentAppGossip
-	require.Equal(byte(atomicTxGossipProtocol), forwardedBytes[0])
-
-	forwardedGossipMsg := &sdk.PushGossip{}
-	require.NoError(proto.Unmarshal(forwardedBytes[1:], forwardedGossipMsg))
-	require.Len(forwardedGossipMsg.Gossip, 1)
-
-	forwardedTx, err := marshaller.UnmarshalGossip(forwardedGossipMsg.Gossip[0])
-	require.NoError(err)
-	require.Equal(tx.ID(), forwardedTx.Tx.ID())
 	require.True(vm.mempool.has(tx.ID()))
 }

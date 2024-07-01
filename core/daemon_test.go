@@ -4,6 +4,7 @@
 package core
 
 import (
+	"context"
 	"errors"
 	"math/big"
 	"testing"
@@ -14,6 +15,8 @@ import (
 
 	"github.com/ava-labs/coreth/core/vm"
 	"github.com/ava-labs/coreth/params"
+
+	"golang.org/x/exp/slog"
 )
 
 // Define a mock structure to spy and mock values for daemon calls
@@ -253,22 +256,24 @@ type LoggerMock struct {
 func (l *LoggerMock) New(ctx ...interface{}) log.Logger {
 	return nil
 }
-
-func (l *LoggerMock) GetHandler() log.Handler {
+func (l *LoggerMock) With(ctx ...interface{}) log.Logger {
 	return nil
 }
 
-func (l *LoggerMock) SetHandler(h log.Handler) {
-}
-
-func (l *LoggerMock) Trace(msg string, ctx ...interface{}) {}
-func (l *LoggerMock) Debug(msg string, ctx ...interface{}) {}
-func (l *LoggerMock) Info(msg string, ctx ...interface{})  {}
-func (l *LoggerMock) Error(msg string, ctx ...interface{}) {}
-func (l *LoggerMock) Crit(msg string, ctx ...interface{})  {}
+func (l *LoggerMock) Log(level slog.Level, msg string, ctx ...interface{})
+func (l *LoggerMock) Trace(msg string, ctx ...interface{})             {}
+func (l *LoggerMock) Debug(msg string, ctx ...interface{})             {}
+func (l *LoggerMock) Info(msg string, ctx ...interface{})              {}
+func (l *LoggerMock) Error(msg string, ctx ...interface{})             {}
+func (l *LoggerMock) Crit(msg string, ctx ...interface{})              {}
+func (l *LoggerMock) Write(level slog.Level, msg string, attrs ...any) {}
 
 func (l *LoggerMock) Warn(msg string, ctx ...interface{}) {
 	l.mockLoggerData.warnCalls++
+}
+
+func (l *LoggerMock) Enabled(ctx context.Context, level slog.Level) bool {
+	return true
 }
 
 func TestAtomicDaemonAndMintLogsError(t *testing.T) {
