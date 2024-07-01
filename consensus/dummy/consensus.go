@@ -112,8 +112,15 @@ func (self *DummyEngine) verifyHeaderGasFields(config *params.ChainConfig, heade
 		return fmt.Errorf("invalid gasUsed: have %d, gasLimit %d", header.GasUsed, header.GasLimit)
 	}
 	if config.IsSongbirdCode() {
-		if config.IsApricotPhase5(header.Time) && header.GasLimit != params.SgbApricotPhase5GasLimit {
-			return fmt.Errorf("expected gas limit to be %d in apricot phase 5 but got %d", params.SgbApricotPhase5GasLimit, header.GasLimit)
+		// Verify that the gas limit is correct for the current phase
+		if config.IsSongbirdTransition(header.Time) {
+			if header.GasLimit != params.SgbTransitionGasLimit {
+				return fmt.Errorf("expected gas limit to be %d in sgb transition but got %d", params.SgbTransitionGasLimit, header.GasLimit)
+			}
+		} else if config.IsApricotPhase5(header.Time) {
+			if header.GasLimit != params.SgbApricotPhase5GasLimit {
+				return fmt.Errorf("expected gas limit to be %d in apricot phase 5 but got %d", params.SgbApricotPhase5GasLimit, header.GasLimit)
+			}
 		}
 	} else {
 		if config.IsCortina(header.Time) {

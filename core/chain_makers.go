@@ -322,7 +322,9 @@ func makeHeader(chain consensus.ChainReader, config *params.ChainConfig, parent 
 
 	var gasLimit uint64
 	if config.IsSongbirdCode() {
-		if config.IsApricotPhase5(time) {
+		if config.IsSongbirdTransition(time) {
+			gasLimit = params.SgbTransitionGasLimit
+		} else if config.IsApricotPhase5(time) {
 			gasLimit = params.SgbApricotPhase5GasLimit
 		} else if config.IsApricotPhase1(time) {
 			gasLimit = params.ApricotPhase1GasLimit

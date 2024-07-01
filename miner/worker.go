@@ -142,7 +142,9 @@ func (w *worker) commitNewWork(predicateContext *precompileconfig.PredicateConte
 
 	var gasLimit uint64
 	if w.chainConfig.IsSongbirdCode() {
-		if w.chainConfig.IsApricotPhase5(timestamp) {
+		if w.chainConfig.IsSongbirdTransition(timestamp) {
+			gasLimit = params.SgbTransitionGasLimit
+		} else if w.chainConfig.IsApricotPhase5(timestamp) {
 			gasLimit = params.SgbApricotPhase5GasLimit
 		} else if w.chainConfig.IsApricotPhase1(timestamp) {
 			gasLimit = params.ApricotPhase1GasLimit

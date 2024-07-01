@@ -473,6 +473,8 @@ var (
 		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		CortinaBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		DurangoBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	CostwoChainConfig = &ChainConfig{
@@ -497,6 +499,8 @@ var (
 		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		CortinaBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		DurangoBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	StagingChainConfig = &ChainConfig{
@@ -521,6 +525,8 @@ var (
 		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		CortinaBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		DurangoBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	LocalFlareChainConfig = &ChainConfig{
@@ -545,6 +551,8 @@ var (
 		ApricotPhase6BlockTimestamp:     utils.NewUint64(0),
 		ApricotPhasePost6BlockTimestamp: utils.NewUint64(0),
 		BanffBlockTimestamp:             utils.NewUint64(0),
+		CortinaBlockTimestamp:           utils.NewUint64(0),
+		DurangoBlockTimestamp:           utils.NewUint64(0),
 	}
 
 	// CostonChainConfig is the configuration for the Coston test network.
@@ -569,7 +577,9 @@ var (
 		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		SongbirdTransitionTimestamp:     utils.TimeToNewUint64(time.Date(2024, time.July, 23, 12, 0, 0, 0, time.UTC)),
 		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		CortinaBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	// LocalChainConfig is the configuration for the Songbird Local network.
@@ -594,8 +604,9 @@ var (
 		ApricotPhasePre6BlockTimestamp:  utils.NewUint64(0),
 		ApricotPhase6BlockTimestamp:     utils.NewUint64(0),
 		ApricotPhasePost6BlockTimestamp: utils.NewUint64(0),
+		SongbirdTransitionTimestamp:     utils.NewUint64(0),
 		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
-		// TODO add Cortina timestamp
+		CortinaBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
 
 	// SongbirdChainConfig is the configuration for the Songbird canary network.
@@ -620,23 +631,10 @@ var (
 		ApricotPhasePre6BlockTimestamp:  utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhase6BlockTimestamp:     utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 		ApricotPhasePost6BlockTimestamp: utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		SongbirdTransitionTimestamp:     utils.TimeToNewUint64(time.Date(2024, time.August, 20, 12, 0, 0, 0, time.UTC)),
 		BanffBlockTimestamp:             utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
+		CortinaBlockTimestamp:           utils.TimeToNewUint64(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC)),
 	}
-
-	// TestChainConfig             = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	// TestLaunchConfig            = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	// TestApricotPhase1Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	// TestApricotPhase2Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	// TestApricotPhase3Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil}
-	// TestApricotPhase4Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil}
-	// TestApricotPhase5Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil}
-	// TestApricotPhasePre6Config  = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil}
-	// TestApricotPhase6Config     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
-	// TestApricotPhasePost6Config = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
-	// TestBanffChainConfig        = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
-	// TestCortinaChainConfig      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
-	// TestDUpgradeChainConfig     = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	// TestRules                   = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
 )
 
 func getUpgradeTime(networkID uint32, upgradeTimes map[uint32]time.Time) *uint64 {
@@ -704,6 +702,8 @@ type ChainConfig struct {
 	ApricotPhase6BlockTimestamp *uint64 `json:"apricotPhase6BlockTimestamp,omitempty"`
 	// Apricot Phase Post-6 deprecates the NativeAssetCall precompile (soft). (nil = no fork, 0 = already activated)
 	ApricotPhasePost6BlockTimestamp *uint64 `json:"apricotPhasePost6BlockTimestamp,omitempty"`
+	// When export/import transactions will be allowed on songbird code (Songbird, Coston, Local)
+	SongbirdTransitionTimestamp *uint64 `json:"songbirdTransitionTimestamp,omitempty"`
 	// Banff restricts import/export transactions to AVAX. (nil = no fork, 0 = already activated)
 	BanffBlockTimestamp *uint64 `json:"banffBlockTimestamp,omitempty"`
 	// Cortina increases the block gas limit to 15M. (nil = no fork, 0 = already activated)
@@ -751,9 +751,10 @@ func (c *ChainConfig) Description() string {
 	banner += fmt.Sprintf(" - Apricot Phase P6 Timestamp        @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0)\n", ptrToString(c.ApricotPhasePre6BlockTimestamp))
 	banner += fmt.Sprintf(" - Apricot Phase 6 Timestamp:        @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0)\n", ptrToString(c.ApricotPhase6BlockTimestamp))
 	banner += fmt.Sprintf(" - Apricot Phase Post-6 Timestamp:   @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.8.0\n", ptrToString(c.ApricotPhasePost6BlockTimestamp))
+	banner += fmt.Sprintf(" - Songbird Transition Timestamp:    @%-10v\n", ptrToString(c.SongbirdTransitionTimestamp))
 	banner += fmt.Sprintf(" - Banff Timestamp:                  @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.9.0)\n", ptrToString(c.BanffBlockTimestamp))
 	banner += fmt.Sprintf(" - Cortina Timestamp:                @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.10.0)\n", ptrToString(c.CortinaBlockTimestamp))
-	banner += fmt.Sprintf(" - Durango Timestamp:               @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.11.0)\n", ptrToString(c.DurangoBlockTimestamp))
+	banner += fmt.Sprintf(" - Durango Timestamp:                @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.11.0)\n", ptrToString(c.DurangoBlockTimestamp))
 	banner += fmt.Sprintf(" - Cancun Timestamp:                 @%-10v (https://github.com/ava-labs/avalanchego/releases/tag/v1.12.0)\n", ptrToString(c.CancunTime))
 	banner += "\n"
 	return banner
@@ -865,6 +866,12 @@ func (c *ChainConfig) IsApricotPhase6(time uint64) bool {
 // with a timestamp after the Apricot Phase 6 Post upgrade time.
 func (c *ChainConfig) IsApricotPhasePost6(time uint64) bool {
 	return utils.IsTimestampForked(c.ApricotPhasePost6BlockTimestamp, time)
+}
+
+// IsSongbirdTransition returns whether [time] represents a block
+// with a timestamp after the Songbird code transition time.
+func (c *ChainConfig) IsSongbirdTransition(time uint64) bool {
+	return utils.IsTimestampForked(c.SongbirdTransitionTimestamp, time)
 }
 
 // IsBanff returns whether [time] represents a block
@@ -1239,7 +1246,8 @@ type Rules struct {
 	IsDurango                                                                           bool
 
 	// Songbird (coston, local)
-	IsSongbirdCode bool
+	IsSongbirdCode       bool
+	IsSongbirdTransition bool
 
 	// Precompiles maps addresses to stateful precompiled contracts that are enabled
 	// ActivePrecompiles maps addresses to stateful precompiled contracts that are enabled
@@ -1296,6 +1304,7 @@ func (c *ChainConfig) AvalancheRules(blockNum *big.Int, timestamp uint64) Rules 
 	rules.IsApricotPhasePre6 = c.IsApricotPhasePre6(timestamp)
 	rules.IsApricotPhase6 = c.IsApricotPhase6(timestamp)
 	rules.IsApricotPhasePost6 = c.IsApricotPhasePost6(timestamp)
+	rules.IsSongbirdTransition = c.IsSongbirdTransition(timestamp)
 	rules.IsBanff = c.IsBanff(timestamp)
 	rules.IsCortina = c.IsCortina(timestamp)
 	rules.IsDurango = c.IsDurango(timestamp)

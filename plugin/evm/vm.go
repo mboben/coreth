@@ -208,6 +208,8 @@ var (
 	errTooManyAtomicTx                = errors.New("too many atomic tx")
 	errMissingAtomicTxs               = errors.New("cannot build a block with non-empty extra data and zero atomic transactions")
 	errInvalidHeaderPredicateResults  = errors.New("invalid header predicate results")
+	errImportTxsDisabled              = errors.New("import transactions are disabled")
+	errExportTxsDisabled              = errors.New("export transactions are disabled")
 )
 
 var originalStderr *os.File
@@ -1609,7 +1611,7 @@ func (vm *VM) verifyTxAtTip(tx *Tx) error {
 		}
 	}
 
-	// We don’t need to revert the state here in case verifyTx errors, because
+	// We don�t need to revert the state here in case verifyTx errors, because
 	// [preferredState] is thrown away either way.
 	return vm.verifyTx(tx, parentHeader.Hash(), nextBaseFee, preferredState, rules)
 }
