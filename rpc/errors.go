@@ -64,9 +64,15 @@ var (
 	_ Error = new(invalidRequestError)
 	_ Error = new(invalidMessageError)
 	_ Error = new(invalidParamsError)
+	_ Error = new(internalServerError)
 )
 
-const defaultErrorCode = -32000
+const (
+	errcodeDefault                  = -32000
+	errcodeNotificationsUnsupported = -32001
+	errcodePanic                    = -32603
+	errcodeMarshalError             = -32603
+)
 
 type methodNotFoundError struct{ method string }
 
