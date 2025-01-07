@@ -165,6 +165,7 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2024, time.December, 17, 13, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2024, time.December, 17, 14, 0, 0, 0, time.UTC).Unix()),
 		BanffBlockTimestamp:             big.NewInt(time.Date(2024, time.December, 17, 15, 0, 0, 0, time.UTC).Unix()),
+		CortinaBlockTimestamp:           big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
 	}
 
 	CostwoChainConfig = &ChainConfig{
@@ -190,6 +191,7 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2024, time.November, 26, 13, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2024, time.November, 26, 14, 0, 0, 0, time.UTC).Unix()),
 		BanffBlockTimestamp:             big.NewInt(time.Date(2024, time.November, 26, 15, 0, 0, 0, time.UTC).Unix()),
+		CortinaBlockTimestamp:           big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
 	}
 
 	StagingChainConfig = &ChainConfig{
@@ -215,6 +217,7 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(0),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
 		BanffBlockTimestamp:             big.NewInt(0),
+		CortinaBlockTimestamp:           big.NewInt(0),
 	}
 
 	LocalFlareChainConfig = &ChainConfig{
@@ -240,6 +243,7 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(0),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
 		BanffBlockTimestamp:             big.NewInt(0),
+		CortinaBlockTimestamp:           big.NewInt(0),
 	}
 
 	// CostonChainConfig is the configuration for the Coston test network.
@@ -267,6 +271,7 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2025, time.January, 7, 13, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2025, time.January, 7, 14, 0, 0, 0, time.UTC).Unix()),
 		BanffBlockTimestamp:             big.NewInt(time.Date(2025, time.January, 7, 15, 0, 0, 0, time.UTC).Unix()),
+		CortinaBlockTimestamp:           big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
 	}
 
 	// LocalChainConfig is the configuration for the Songbird Local network.
@@ -294,7 +299,7 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(0),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(0),
 		BanffBlockTimestamp:             big.NewInt(0),
-		// TODO add Cortina timestamp
+		CortinaBlockTimestamp:           big.NewInt(0),
 	}
 
 	// SongbirdChainConfig is the configuration for the Songbird canary network.
@@ -322,22 +327,23 @@ var (
 		ApricotPhase6BlockTimestamp:     big.NewInt(time.Date(2025, time.January, 28, 13, 0, 0, 0, time.UTC).Unix()),
 		ApricotPhasePost6BlockTimestamp: big.NewInt(time.Date(2025, time.January, 28, 14, 0, 0, 0, time.UTC).Unix()),
 		BanffBlockTimestamp:             big.NewInt(time.Date(2025, time.January, 28, 15, 0, 0, 0, time.UTC).Unix()),
+		CortinaBlockTimestamp:           big.NewInt(time.Date(10000, time.January, 1, 0, 0, 0, 0, time.UTC).Unix()),
 	}
 
-	TestChainConfig              = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestLaunchConfig             = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase1Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase2Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase3Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase4Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil}
-	TestApricotPhase5Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil}
-	TestSgbTransitionChainConfig = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil}
-	TestApricotPhasePre6Config   = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
-	TestApricotPhase6Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
-	TestApricotPhasePost6Config  = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
-	TestBanffChainConfig         = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
-	TestCortinaChainConfig       = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
-	TestDUpgradeChainConfig      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}	
+	TestChainConfig              = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
+	TestLaunchConfig             = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
+	TestApricotPhase1Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil, nil}
+	TestApricotPhase2Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil, nil}
+	TestApricotPhase3Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil, nil}
+	TestApricotPhase4Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil, nil}
+	TestApricotPhase5Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil, nil}
+	TestSgbTransitionChainConfig = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil, nil}
+	TestApricotPhasePre6Config   = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil, nil}
+	TestApricotPhase6Config      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, nil}
+	TestApricotPhasePost6Config  = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil}
+	TestBanffChainConfig         = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), nil}
+	TestCortinaChainConfig       = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
+	TestDUpgradeChainConfig      = &ChainConfig{AvalancheContext{common.Hash{1}}, big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0), big.NewInt(0)}
 	TestRules                    = TestChainConfig.AvalancheRules(new(big.Int), new(big.Int))
 )
 
