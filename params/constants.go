@@ -11,33 +11,31 @@ import (
 // times for Flare and Songbird networks.
 var (
 	ApricotPhase1Times = map[uint32]time.Time{
-		constants.MainnetID: time.Date(2021, time.March, 31, 14, 0, 0, 0, time.UTC),
+		constants.MainnetID:  time.Date(2021, time.March, 31, 14, 0, 0, 0, time.UTC),
+		constants.CostonID:   time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
+		constants.SongbirdID: time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	ApricotPhase2Times = map[uint32]time.Time{
-		constants.MainnetID: time.Date(2021, time.May, 10, 11, 0, 0, 0, time.UTC),
+		constants.MainnetID:  time.Date(2021, time.May, 10, 11, 0, 0, 0, time.UTC),
+		constants.CostonID:   time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
+		constants.SongbirdID: time.Date(2000, time.January, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	ApricotPhase3Times = map[uint32]time.Time{
 		constants.MainnetID:  time.Date(2021, time.August, 24, 14, 0, 0, 0, time.UTC),
-		constants.FlareID:    time.Date(2022, time.June, 1, 0, 0, 0, 0, time.UTC),
-		constants.CostwoID:   time.Date(2022, time.June, 1, 0, 0, 0, 0, time.UTC),
 		constants.CostonID:   time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC),
 		constants.SongbirdID: time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC),
 	}
 
 	ApricotPhase4Times = map[uint32]time.Time{
 		constants.MainnetID:  time.Date(2021, time.September, 22, 21, 0, 0, 0, time.UTC),
-		constants.FlareID:    time.Date(2022, time.June, 1, 0, 0, 0, 0, time.UTC),
-		constants.CostwoID:   time.Date(2022, time.June, 1, 0, 0, 0, 0, time.UTC),
 		constants.CostonID:   time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC),
 		constants.SongbirdID: time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC),
 	}
 
 	ApricotPhase5Times = map[uint32]time.Time{
 		constants.MainnetID:  time.Date(2021, time.December, 2, 18, 0, 0, 0, time.UTC),
-		constants.FlareID:    time.Date(2022, time.June, 1, 0, 0, 0, 0, time.UTC),
-		constants.CostwoID:   time.Date(2022, time.June, 1, 0, 0, 0, 0, time.UTC),
 		constants.CostonID:   time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC),
 		constants.SongbirdID: time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC),
 	}
