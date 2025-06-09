@@ -152,7 +152,7 @@ type EVMCaller interface {
 	AddBalance(addr common.Address, amount *big.Int)
 }
 
-func GetDaemonGasMultiplier(blockTime uint64) uint64 {
+func GetDaemonGasMultiplier(blockTime uint64, gasLimit uint64) uint64 {
 	switch {
 	default:
 		return 100
@@ -219,7 +219,7 @@ func daemon(evm EVMCaller) (int, *big.Int, error) {
 		vm.AccountRef(daemonContract),
 		daemonContract,
 		GetDaemonSelector(evm.GetBlockTime()),
-		GetDaemonGasMultiplier(evm.GetBlockTime())*evm.GetGasLimit())
+		GetDaemonGasMultiplier(evm.GetBlockTime(), evm.GetGasLimit()))
 	// If no error and a value came back...
 	if daemonErr == nil && daemonRet != nil {
 		// Did we get one big int?
