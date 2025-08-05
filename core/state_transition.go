@@ -102,7 +102,7 @@ func (st *StateTransition) GetGasLimit() uint64 {
 	return st.evm.Context.GasLimit
 }
 
-func (st *StateTransition) AddBalance(addr common.Address, amount *big.Int) {
+func (st *StateTransition) AddBalance(addr common.Address, amount *uint256.Int) {
 	st.state.AddBalance(addr, amount)
 }
 
@@ -533,7 +533,7 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 	} else {
 		// Increment the nonce for the next transaction
 		st.state.SetNonce(msg.From, st.state.GetNonce(sender.Address())+1)
-		ret, st.gasRemaining, vmerr = st.evm.Call(sender, st.to(), msg.Data, st.gasRemaining, msg.Value)
+		ret, st.gasRemaining, vmerr = st.evm.Call(sender, st.to(), msg.Data, st.gasRemaining, value)
 		if vmerr == nil && chainID != nil {
 			if isSongbird { // Songbird, Coston, Local (Songbird)
 				handleSongbirdTransitionDbContracts(st, rules.IsDurango, chainID, timestamp, msg, ret)
@@ -542,23 +542,28 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 			}
 		}
 	}
-	st.refundGas(rules.IsApricotPhase1)
+	price, overflow := uint256.FromBig(msg.GasPrice)
+	if overflow {
+		return nil, ErrGasUintOverflow
+	}
+	gasRefund := st.refundGas(rules.IsApricotPhase1)
 
 	if vmerr == nil && IsPrioritisedContractCall(chainID, timestamp, msg.To, msg.Data, ret, st.initialGas) {
 		nominalGasUsed := params.TxGas // 21000
-		nominalFee := new(big.Int).Mul(new(big.Int).SetUint64(nominalGasUsed), new(big.Int).SetUint64(nominalGasPrice))
+		nominalFee := new(uint256.Int).Mul(uint256.NewInt(nominalGasUsed), uint256.NewInt(nominalGasPrice))
 		actualGasUsed := st.gasUsed()
-		actualGasPrice := msg.GasPrice
-		actualFee := new(big.Int).Mul(new(big.Int).SetUint64(actualGasUsed), actualGasPrice)
+		actualFee := new(uint256.Int).Mul(uint256.NewInt(actualGasUsed), price)
 		if actualFee.Cmp(nominalFee) > 0 {
-			feeRefund := new(big.Int).Sub(actualFee, nominalFee)
+			feeRefund := new(uint256.Int).Sub(actualFee, nominalFee)
 			st.state.AddBalance(st.msg.From, feeRefund)
 			st.state.AddBalance(burnAddress, nominalFee)
 		} else {
 			st.state.AddBalance(burnAddress, actualFee)
 		}
 	} else {
-		st.state.AddBalance(burnAddress, new(big.Int).Mul(new(big.Int).SetUint64(st.gasUsed()), msg.GasPrice))
+		fee := new(uint256.Int).SetUint64(st.gasUsed())
+		fee.Mul(fee, price)
+		st.state.AddBalance(burnAddress, fee)
 	}
 
 	// Call the daemon if there is no vm error

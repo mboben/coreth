@@ -22,7 +22,8 @@ import (
 	"github.com/ava-labs/avalanchego/network/p2p/acp118"
 	"github.com/ava-labs/avalanchego/network/p2p/gossip"
 	"github.com/ava-labs/avalanchego/upgrade"
-	avalanchegoConstants "github.com/ava-labs/avalanchego/utils/constants"
+
+	// avalanchegoConstants "github.com/ava-labs/coreth/constants"
 	"github.com/holiman/uint256"
 	"github.com/prometheus/client_golang/prometheus"
 
@@ -455,13 +456,20 @@ func (vm *VM) Initialize(
 	var chainID *big.Int
 	// Set the chain config for mainnet/fuji chain IDs
 	switch chainCtx.NetworkID {
-	case avalanchegoConstants.MainnetID:
+	case constants.MainnetID:
 		chainID = params.AvalancheMainnetChainID
 		extDataHashes = mainnetExtDataHashes
-	case avalanchegoConstants.FujiID:
-		chainID = params.AvalancheFujiChainID
-		extDataHashes = fujiExtDataHashes
-	case avalanchegoConstants.LocalID:
+	case constants.FlareID:
+		chainID = params.FlareChainID
+	case constants.SongbirdID:
+		chainID = params.SongbirdChainID
+	case constants.CostwoID:
+		chainID = params.CostwoChainID
+	case constants.CostonID:
+		chainID = params.CostonChainID
+	case constants.LocalFlareID:
+		chainID = params.LocalFlareChainID
+	case constants.LocalID:
 		chainID = params.AvalancheLocalChainID
 	default:
 		chainID = g.Config.ChainID
@@ -470,7 +478,7 @@ func (vm *VM) Initialize(
 	// if the chainCtx.NetworkUpgrades is not empty, set the chain config
 	// normally it should not be empty, but some tests may not set it
 	if chainCtx.NetworkUpgrades != (upgrade.Config{}) {
-		g.Config = params.GetChainConfig(chainCtx.NetworkUpgrades, new(big.Int).Set(chainID))
+		g.Config = params.GetChainConfig(chainCtx.NetworkID, new(big.Int).Set(chainID))
 	}
 
 	// If the Durango is activated, activate the Warp Precompile at the same time
@@ -487,7 +495,7 @@ func (vm *VM) Initialize(
 	vm.syntacticBlockValidator = NewBlockValidator(extDataHashes)
 
 	// Ensure that non-standard commit interval is not allowed for production networks
-	if avalanchegoConstants.ProductionNetworkIDs.Contains(chainCtx.NetworkID) {
+	if constants.ProductionNetworkIDs.Contains(chainCtx.NetworkID) {
 		if vm.config.CommitInterval != defaultCommitInterval {
 			return fmt.Errorf("cannot start non-local network with commit interval %d", vm.config.CommitInterval)
 		}
@@ -637,7 +645,7 @@ func (vm *VM) Initialize(
 	var (
 		bonusBlockHeights map[uint64]ids.ID
 	)
-	if vm.ctx.NetworkID == avalanchegoConstants.MainnetID {
+	if vm.ctx.NetworkID == constants.MainnetID {
 		bonusBlockHeights, err = readMainnetBonusBlocks()
 		if err != nil {
 			return fmt.Errorf("failed to read mainnet bonus blocks: %w", err)
@@ -1678,7 +1686,7 @@ func (vm *VM) ParseAddress(addrStr string) (ids.ID, ids.ShortID, error) {
 		return ids.ID{}, ids.ShortID{}, err
 	}
 
-	expectedHRP := avalanchegoConstants.GetHRP(vm.ctx.NetworkID)
+	expectedHRP := constants.GetHRP(vm.ctx.NetworkID)
 	if hrp != expectedHRP {
 		return ids.ID{}, ids.ShortID{}, fmt.Errorf("expected hrp %q but got %q",
 			expectedHRP, hrp)

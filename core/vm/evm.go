@@ -29,6 +29,7 @@ package vm
 import (
 	"math/big"
 	"sync/atomic"
+	"time"
 
 	"github.com/ava-labs/avalanchego/snow"
 	"github.com/ava-labs/coreth/constants"
@@ -261,13 +262,6 @@ func (evm *EVM) Interpreter() *EVMInterpreter {
 	return evm.interpreter
 }
 
-// SetBlockContext updates the block context of the EVM.
-func (evm *EVM) SetBlockContext(blockCtx BlockContext) {
-	evm.Context = blockCtx
-	num := blockCtx.BlockNumber
-	evm.chainRules = evm.chainConfig.AvalancheRules(num, blockCtx.Time)
-}
-
 // DaemonCall separates a regular call from taking a snapshot and reverting to it in case of error.
 // The function returns the snapshot in order to permit another opportunity for reverting to the
 // snapshot in the event that the subsequent call to mint() in coreth/core/daemon.go fails.
@@ -279,7 +273,7 @@ func (evm *EVM) DaemonCall(caller ContractRef, addr common.Address, input []byte
 	}()
 	evm.Config.Tracer = nil
 
-	value := big.NewInt(0)
+	value := uint256.NewInt(0)
 	// Fail if we're trying to execute above the call depth limit
 	if evm.depth > int(params.CallCreateDepth) {
 		return 0, nil, gas, vmerrs.ErrDepth
@@ -311,18 +305,19 @@ func (evm *EVM) DaemonCall(caller ContractRef, addr common.Address, input []byte
 // CallWithoutSnapshot executes the contract associated with the addr with the given input as
 // parameters. It also handles any necessary value transfer required and takes
 // the necessary steps to create accounts
-func (evm *EVM) CallWithoutSnapshot(caller ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int) (ret []byte, leftOverGas uint64, err error) {
+func (evm *EVM) CallWithoutSnapshot(caller ContractRef, addr common.Address, input []byte, gas uint64, value *uint256.Int) (ret []byte, leftOverGas uint64, err error) {
 	p, isPrecompile := evm.precompile(addr)
+	bigValue := value.ToBig()
 
 	if !evm.StateDB.Exist(addr) {
 		if !isPrecompile && evm.chainRules.IsEIP158 && value.Sign() == 0 {
 			// Calling a non existing account, don't do anything, but ping the tracer
 			if evm.Config.Tracer != nil {
 				if evm.depth == 0 {
-					evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, value)
+					evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, bigValue)
 					evm.Config.Tracer.CaptureEnd(ret, 0, nil)
 				} else {
-					evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, value)
+					evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, bigValue)
 					evm.Config.Tracer.CaptureExit(ret, 0, nil)
 				}
 			}
@@ -335,13 +330,13 @@ func (evm *EVM) CallWithoutSnapshot(caller ContractRef, addr common.Address, inp
 	// Capture the tracer start/end events in debug mode
 	if evm.Config.Tracer != nil {
 		if evm.depth == 0 {
-			evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, value)
+			evm.Config.Tracer.CaptureStart(evm, caller.Address(), addr, false, input, gas, bigValue)
 			defer func(startGas uint64, startTime time.Time) { // Lazy evaluation of the parameters
 				evm.Config.Tracer.CaptureEnd(ret, startGas-gas, err)
 			}(gas, time.Now())
 		} else {
 			// Handle tracer events for entering and exiting a call frame
-			evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, value)
+			evm.Config.Tracer.CaptureEnter(CALL, caller.Address(), addr, input, gas, bigValue)
 			defer func(startGas uint64) {
 				evm.Config.Tracer.CaptureExit(ret, startGas-gas, err)
 			}(gas)

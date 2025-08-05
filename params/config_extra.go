@@ -10,7 +10,7 @@ import (
 	"math/big"
 
 	"github.com/ava-labs/avalanchego/snow"
-	"github.com/ava-labs/avalanchego/upgrade"
+	avaUpgrade "github.com/ava-labs/avalanchego/upgrade"
 	"github.com/ava-labs/coreth/utils"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -50,7 +50,7 @@ func (c *ChainConfig) SetEthUpgrades() {
 		// In testing or local networks, we only support enabling Berlin and London prior
 		// to the initially active time. This is likely to correspond to an intended block
 		// number of 0 as well.
-		initiallyActive := uint64(upgrade.InitiallyActiveTime.Unix())
+		initiallyActive := uint64(avaUpgrade.InitiallyActiveTime.Unix())
 		if c.ApricotPhase2BlockTimestamp != nil && *c.ApricotPhase2BlockTimestamp <= initiallyActive && c.BerlinBlock == nil {
 			c.BerlinBlock = big.NewInt(0)
 		}
@@ -178,7 +178,7 @@ func (c *ChainConfig) ToWithUpgradesJSON() *ChainConfigWithUpgradesJSON {
 	}
 }
 
-func GetChainConfig(agoUpgrade upgrade.Config, chainID *big.Int) *ChainConfig {
+func GetChainConfig(networkID uint32, chainID *big.Int) *ChainConfig {
 	c := &ChainConfig{
 		ChainID:             chainID,
 		HomesteadBlock:      big.NewInt(0),
@@ -192,7 +192,7 @@ func GetChainConfig(agoUpgrade upgrade.Config, chainID *big.Int) *ChainConfig {
 		PetersburgBlock:     big.NewInt(0),
 		IstanbulBlock:       big.NewInt(0),
 		MuirGlacierBlock:    big.NewInt(0),
-		NetworkUpgrades:     getNetworkUpgrades(agoUpgrade),
+		NetworkUpgrades:     getNetworkUpgrades(networkID),
 	}
 	return c
 }

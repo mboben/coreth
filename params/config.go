@@ -28,6 +28,7 @@ package params
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 
@@ -58,21 +59,21 @@ var (
 )
 
 var (
-	// AvalancheMainnetChainConfig is the configuration for Avalanche Main Network
-	AvalancheMainnetChainConfig = getChainConfig(constants.MainnetID, AvalancheMainnetChainID)
+	// // AvalancheMainnetChainConfig is the configuration for Avalanche Main Network
+	// AvalancheMainnetChainConfig = getChainConfig(constants.MainnetID, AvalancheMainnetChainID)
 
-	// AvalancheLocalChainConfig is the configuration for the Avalanche Local Network
-	AvalancheLocalChainConfig = getChainConfig(constants.LocalID, AvalancheLocalChainID)
+	// // AvalancheLocalChainConfig is the configuration for the Avalanche Local Network
+	// AvalancheLocalChainConfig = getChainConfig(constants.LocalID, AvalancheLocalChainID)
 
-	// Configuration for Flare main, test (Costwo) and local networks
-	FlareChainConfig      = getChainConfig(constants.FlareID, FlareChainID)
-	CostwoChainConfig     = getChainConfig(constants.CostwoID, CostwoChainID)
-	LocalFlareChainConfig = getChainConfig(constants.LocalFlareID, LocalFlareChainID)
+	// // Configuration for Flare main, test (Costwo) and local networks
+	// FlareChainConfig      = getChainConfig(constants.FlareID, FlareChainID)
+	// CostwoChainConfig     = getChainConfig(constants.CostwoID, CostwoChainID)
+	// LocalFlareChainConfig = getChainConfig(constants.LocalFlareID, LocalFlareChainID)
 
-	// Configuration for Songbird main, test (Coston) and local networks
-	SongbirdChainConfig = getChainConfig(constants.SongbirdID, SongbirdChainID)
-	CostonChainConfig   = getChainConfig(constants.CostonID, CostonChainID)
-	LocalChainConfig    = getChainConfig(constants.LocalID, LocalChainID)
+	// // Configuration for Songbird main, test (Coston) and local networks
+	// SongbirdChainConfig = getChainConfig(constants.SongbirdID, SongbirdChainID)
+	// CostonChainConfig   = getChainConfig(constants.CostonID, CostonChainID)
+	// LocalChainConfig    = getChainConfig(constants.LocalID, LocalChainID)
 
 	TestChainConfig = &ChainConfig{
 		AvalancheContext:    AvalancheContext{utils.TestSnowContext()},

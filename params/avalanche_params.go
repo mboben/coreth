@@ -26,9 +26,6 @@ const (
 	SgbApricotPhase5GasLimit uint64 = 30_000_000
 
 	ApricotPhase3ExtraDataSize            uint64 = 80
-	ApricotPhase3MinBaseFee               int64  = 75_000_000_000
-	ApricotPhase3MaxBaseFee               int64  = 225_000_000_000
-	ApricotPhase3InitialBaseFee           int64  = 225_000_000_000
 	ApricotPhase3MinBaseFee               int64  = 75 * GWei
 	ApricotPhase3MaxBaseFee               int64  = 225 * GWei
 	ApricotPhase3InitialBaseFee           int64  = 225 * GWei

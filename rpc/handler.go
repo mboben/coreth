@@ -32,6 +32,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -41,11 +42,6 @@ import (
 	"github.com/ava-labs/coreth/metrics"
 	"github.com/ethereum/go-ethereum/log"
 	"golang.org/x/time/rate"
-)
-
-const (
-	errMsgResponseTooLarge = "response too large"
-	errMsgBatchTooLarge    = "batch too large"
 )
 
 var (

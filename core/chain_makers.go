@@ -377,18 +377,18 @@ func (cm *chainMaker) makeHeader(parent *types.Block, gap uint64, state *state.S
 	if cm.config.IsCortina(time) {
 		gasLimit = params.CortinaGasLimit
 	} else {
-		if config.IsSongbirdCode() {
-			if config.IsSongbirdTransition(time) {
+		if cm.config.IsSongbirdCode() {
+			if cm.config.IsSongbirdTransition(time) {
 				gasLimit = params.SgbTransitionGasLimit
-			} else if config.IsApricotPhase5(time) {
+			} else if cm.config.IsApricotPhase5(time) {
 				gasLimit = params.SgbApricotPhase5GasLimit
-			} else if config.IsApricotPhase1(time) {
+			} else if cm.config.IsApricotPhase1(time) {
 				gasLimit = params.ApricotPhase1GasLimit
 			} else {
 				gasLimit = CalcGasLimit(parent.GasUsed(), parent.GasLimit(), parent.GasLimit(), parent.GasLimit())
 			}
 		} else {
-			if config.IsApricotPhase1(time) {
+			if cm.config.IsApricotPhase1(time) {
 				gasLimit = params.ApricotPhase1GasLimit
 			} else {
 				gasLimit = CalcGasLimit(parent.GasUsed(), parent.GasLimit(), parent.GasLimit(), parent.GasLimit())
