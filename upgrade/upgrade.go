@@ -51,7 +51,7 @@ var (
 		BanffTime:             time.Date(2024, time.December, 17, 15, 0, 0, 0, time.UTC),
 		CortinaTime:           time.Date(2025, time.May, 13, 12, 0, 0, 0, time.UTC),
 		DurangoTime:           time.Date(2025, time.August, 5, 12, 0, 0, 0, time.UTC),
-		EtnaTime:              time.Date(10000, time.December, 1, 0, 0, 0, 0, time.UTC),
+		EtnaTime:              UnscheduledActivationTime,
 	}
 	Songbird = Config{
 		ApricotPhase1Time:      InitiallyActiveTime,
