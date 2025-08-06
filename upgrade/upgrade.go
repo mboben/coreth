@@ -18,6 +18,7 @@ import (
 var (
 	InitiallyActiveTime       = time.Date(2020, time.December, 5, 5, 0, 0, 0, time.UTC)
 	UnscheduledActivationTime = time.Date(9999, time.December, 1, 0, 0, 0, 0, time.UTC)
+	ZeroTime                  = time.Unix(0, 0)
 
 	Mainnet = Config{
 		ApricotPhase1Time:            time.Date(2021, time.March, 31, 14, 0, 0, 0, time.UTC),
@@ -40,11 +41,11 @@ var (
 		EtnaTime:                  time.Date(2024, time.December, 16, 17, 0, 0, 0, time.UTC),
 	}
 	Flare = Config{
-		ApricotPhase1Time:     InitiallyActiveTime,
-		ApricotPhase2Time:     InitiallyActiveTime,
-		ApricotPhase3Time:     InitiallyActiveTime,
-		ApricotPhase4Time:     InitiallyActiveTime,
-		ApricotPhase5Time:     InitiallyActiveTime,
+		ApricotPhase1Time:     ZeroTime,
+		ApricotPhase2Time:     ZeroTime,
+		ApricotPhase3Time:     ZeroTime,
+		ApricotPhase4Time:     ZeroTime,
+		ApricotPhase5Time:     ZeroTime,
 		ApricotPhasePre6Time:  time.Date(2024, time.December, 17, 12, 0, 0, 0, time.UTC),
 		ApricotPhase6Time:     time.Date(2024, time.December, 17, 13, 0, 0, 0, time.UTC),
 		ApricotPhasePost6Time: time.Date(2024, time.December, 17, 14, 0, 0, 0, time.UTC),
@@ -54,8 +55,8 @@ var (
 		EtnaTime:              UnscheduledActivationTime,
 	}
 	Songbird = Config{
-		ApricotPhase1Time:      InitiallyActiveTime,
-		ApricotPhase2Time:      InitiallyActiveTime,
+		ApricotPhase1Time:      ZeroTime,
+		ApricotPhase2Time:      ZeroTime,
 		ApricotPhase3Time:      time.Date(2022, time.March, 7, 14, 0, 0, 0, time.UTC),
 		ApricotPhase4Time:      time.Date(2022, time.March, 7, 15, 0, 0, 0, time.UTC),
 		ApricotPhase5Time:      time.Date(2022, time.March, 7, 16, 0, 0, 0, time.UTC),
@@ -69,11 +70,11 @@ var (
 		EtnaTime:               UnscheduledActivationTime,
 	}
 	Costwo = Config{
-		ApricotPhase1Time:     InitiallyActiveTime,
-		ApricotPhase2Time:     InitiallyActiveTime,
-		ApricotPhase3Time:     InitiallyActiveTime,
-		ApricotPhase4Time:     InitiallyActiveTime,
-		ApricotPhase5Time:     InitiallyActiveTime,
+		ApricotPhase1Time:     ZeroTime,
+		ApricotPhase2Time:     ZeroTime,
+		ApricotPhase3Time:     ZeroTime,
+		ApricotPhase4Time:     ZeroTime,
+		ApricotPhase5Time:     ZeroTime,
 		ApricotPhasePre6Time:  time.Date(2024, time.November, 26, 12, 0, 0, 0, time.UTC),
 		ApricotPhase6Time:     time.Date(2024, time.November, 26, 13, 0, 0, 0, time.UTC),
 		ApricotPhasePost6Time: time.Date(2024, time.November, 26, 14, 0, 0, 0, time.UTC),
@@ -83,8 +84,8 @@ var (
 		EtnaTime:              UnscheduledActivationTime,
 	}
 	Coston = Config{
-		ApricotPhase1Time:      InitiallyActiveTime,
-		ApricotPhase2Time:      InitiallyActiveTime,
+		ApricotPhase1Time:      ZeroTime,
+		ApricotPhase2Time:      ZeroTime,
 		ApricotPhase3Time:      time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC),
 		ApricotPhase4Time:      time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC),
 		SongbirdTransitionTime: time.Date(2024, time.July, 23, 12, 0, 0, 0, time.UTC),
