@@ -88,6 +88,7 @@ var (
 		ApricotPhase2Time:      ZeroTime,
 		ApricotPhase3Time:      time.Date(2022, time.February, 25, 14, 0, 0, 0, time.UTC),
 		ApricotPhase4Time:      time.Date(2022, time.February, 25, 15, 0, 0, 0, time.UTC),
+		ApricotPhase5Time:      time.Date(2022, time.February, 25, 16, 0, 0, 0, time.UTC),
 		SongbirdTransitionTime: time.Date(2024, time.July, 23, 12, 0, 0, 0, time.UTC),
 		ApricotPhasePre6Time:   time.Date(2025, time.January, 7, 12, 0, 0, 0, time.UTC),
 		ApricotPhase6Time:      time.Date(2025, time.January, 7, 13, 0, 0, 0, time.UTC),
