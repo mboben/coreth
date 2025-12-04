@@ -11,7 +11,6 @@ import (
 	"math/big"
 
 	"github.com/ava-labs/coreth/accounts"
-	"github.com/ava-labs/coreth/core/state"
 	"github.com/ava-labs/coreth/params"
 	"github.com/holiman/uint256"
 
@@ -42,6 +41,7 @@ var (
 	errOverflowExport                                    = errors.New("overflow when computing export amount + txFee")
 	errInsufficientFunds                                 = errors.New("insufficient funds")
 	errInvalidNonce                                      = errors.New("invalid nonce")
+	errExportTxsDisabled                                 = errors.New("export transactions are disabled")
 )
 
 // UnsignedExportTx is an unsigned ExportTx
@@ -249,25 +249,25 @@ func (utx *UnsignedExportTx) SemanticVerify(
 		}
 
 		sig := cred.Sigs[0][:]
-		pubKey, err := vm.secpCache.RecoverPublicKeyFromHash(txHash, sig)
+		pubKey, err := backend.SecpCache.RecoverPublicKeyFromHash(txHash, sig)
 		if err != nil {
 			return err
 		}
 
 		// Verify the address recovered from the signature of the transaction hash without a prefix
 		// (Standard Avalanche approach, but unsupported/deprecated by most signing tools)
-		if input.Address == PublicKeyToEthAddress(pubKey) {
+		if input.Address == pubKey.EthAddress() {
 			continue
 		}
 
 		// Verify the address recovered from the signature of the transaction hash with the
 		// standard Ethereum prefix (see accounts.TextHash)
 		if rules.IsBanff {
-			pubKey, err := vm.secpCache.RecoverPublicKeyFromHash(txHashEth, sig)
+			pubKey, err := backend.SecpCache.RecoverPublicKeyFromHash(txHashEth, sig)
 			if err != nil {
 				return err
 			}
-			if input.Address == PublicKeyToEthAddress(pubKey) {
+			if input.Address == pubKey.EthAddress() {
 				continue
 			}
 		}

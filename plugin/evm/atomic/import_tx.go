@@ -43,6 +43,7 @@ var (
 	errNilBaseFeeApricotPhase3                         = errors.New("nil base fee is invalid after apricotPhase3")
 	errInsufficientFundsForFee                         = errors.New("insufficient AVAX funds to pay transaction fee")
 	errRejectedParent                                  = errors.New("rejected parent")
+	errImportTxsDisabled                               = errors.New("import transactions are disabled")
 )
 
 // UnsignedImportTx is an unsigned ImportTx

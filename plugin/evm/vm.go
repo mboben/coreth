@@ -23,8 +23,6 @@ import (
 	"github.com/ava-labs/avalanchego/network/p2p/gossip"
 	"github.com/ava-labs/avalanchego/upgrade"
 
-	// avalanchegoConstants "github.com/ava-labs/coreth/constants"
-	"github.com/holiman/uint256"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/ava-labs/coreth/consensus/dummy"
