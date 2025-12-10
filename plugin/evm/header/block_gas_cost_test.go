@@ -162,6 +162,7 @@ func TestBlockGasCostWithStep(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			assert.Equal(t, test.expected, BlockGasCostWithStep(
+				false,
 				test.parentCost,
 				ap4.BlockGasCostStep,
 				test.timeElapsed,

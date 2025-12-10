@@ -52,11 +52,18 @@ const (
 //
 // The returned cost is clamped to [[MinBlockGasCost], [MaxBlockGasCost]].
 func BlockGasCost(
+	isSongbirdCode bool,
 	parentCost uint64,
 	step uint64,
 	timeElapsed uint64,
 ) uint64 {
-	deviation := safemath.AbsDiff(TargetBlockRate, timeElapsed)
+	var targetBlockRate uint64
+	if isSongbirdCode {
+		targetBlockRate = SgbTargetBlockRate
+	} else {
+		targetBlockRate = TargetBlockRate
+	}
+	deviation := safemath.AbsDiff(targetBlockRate, timeElapsed)
 	change, err := safemath.Mul(step, deviation)
 	if err != nil {
 		change = math.MaxUint64
@@ -66,7 +73,7 @@ func BlockGasCost(
 		op                 = safemath.Add[uint64]
 		defaultCost uint64 = MaxBlockGasCost
 	)
-	if timeElapsed > TargetBlockRate {
+	if timeElapsed > targetBlockRate {
 		op = safemath.Sub
 		defaultCost = MinBlockGasCost
 	}

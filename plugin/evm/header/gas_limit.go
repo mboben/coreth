@@ -13,6 +13,7 @@ import (
 	"github.com/ava-labs/coreth/plugin/evm/upgrade/ap1"
 	"github.com/ava-labs/coreth/plugin/evm/upgrade/ap5"
 	"github.com/ava-labs/coreth/plugin/evm/upgrade/cortina"
+	"github.com/ava-labs/coreth/plugin/evm/upgrade/sgbt"
 )
 
 var (
@@ -41,6 +42,15 @@ func GasLimit(
 		return uint64(state.MaxCapacity()), nil
 	case config.IsCortina(timestamp):
 		return cortina.GasLimit, nil
+	case config.IsSongbirdCode():
+		// Songbird had multiple gas limit changes between AP1 and Cortina
+		switch {
+		case config.IsSongbirdTransition(timestamp):
+			return sgbt.GasLimit, nil
+		case config.IsApricotPhase5(timestamp):
+			return ap5.SgbGasLimit, nil
+		}
+		fallthrough
 	case config.IsApricotPhase1(timestamp):
 		return ap1.GasLimit, nil
 	default:
@@ -118,6 +128,27 @@ func VerifyGasLimit(
 				header.GasLimit,
 			)
 		}
+	case config.IsSongbirdCode():
+		// Songbird had multiple gas limit changes between AP1 and Cortina
+		switch {
+		case config.IsSongbirdTransition(header.Time):
+			if header.GasLimit != sgbt.GasLimit {
+				return fmt.Errorf("%w: expected to be %d in SgbTransition, but found %d",
+					errInvalidGasLimit,
+					sgbt.GasLimit,
+					header.GasLimit,
+				)
+			}
+		case config.IsApricotPhase5(header.Time):
+			if header.GasLimit != ap5.SgbGasLimit {
+				return fmt.Errorf("%w: expected to be %d in ApricotPhase5 on Songbird, but found %d",
+					errInvalidGasLimit,
+					ap5.SgbGasLimit,
+					header.GasLimit,
+				)
+			}
+		}
+		fallthrough
 	case config.IsApricotPhase1(header.Time):
 		if header.GasLimit != ap1.GasLimit {
 			return fmt.Errorf("%w: expected to be %d in ApricotPhase1, but found %d",

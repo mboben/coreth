@@ -190,6 +190,7 @@ func feeWindow(
 		// actual BlockGasCost calculation used for the child block. This
 		// behavior is kept to preserve the original behavior of this function.
 		blockGasCost = BlockGasCostWithStep(
+			config.IsSongbirdCode(),
 			parent.BlockGasCost,
 			ap4.BlockGasCostStep,
 			timeElapsed,

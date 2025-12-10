@@ -160,6 +160,7 @@ func TestVerifyBlockFee(t *testing.T) {
 	for name, test := range tests {
 		t.Run(name, func(t *testing.T) {
 			blockGasCost := header.BlockGasCostWithStep(
+				false,
 				test.parentBlockGasCost,
 				ap4.BlockGasCostStep,
 				test.timeElapsed,

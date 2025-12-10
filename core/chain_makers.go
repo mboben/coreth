@@ -380,29 +380,6 @@ func (cm *chainMaker) makeHeader(parent *types.Block, gap uint64, state *state.S
 	baseFee, err := header.BaseFee(cm.config, parent.Header(), time)
 	if err != nil {
 		panic(err)
-		// -----------------
-		// var gasLimit uint64
-		// if cm.config.IsCortina(time) {
-		// 	gasLimit = params.CortinaGasLimit
-		// } else {
-		// 	if cm.config.IsSongbirdCode() {
-		// 		if cm.config.IsSongbirdTransition(time) {
-		// 			gasLimit = params.SgbTransitionGasLimit
-		// 		} else if cm.config.IsApricotPhase5(time) {
-		// 			gasLimit = params.SgbApricotPhase5GasLimit
-		// 		} else if cm.config.IsApricotPhase1(time) {
-		// 			gasLimit = params.ApricotPhase1GasLimit
-		// 		} else {
-		// 			gasLimit = CalcGasLimit(parent.GasUsed(), parent.GasLimit(), parent.GasLimit(), parent.GasLimit())
-		// 		}
-		// 	} else {
-		// 		if cm.config.IsApricotPhase1(time) {
-		// 			gasLimit = params.ApricotPhase1GasLimit
-		// 		} else {
-		// 			gasLimit = CalcGasLimit(parent.GasUsed(), parent.GasLimit(), parent.GasLimit(), parent.GasLimit())
-		// 		}
-		// 	}
-		// -----------
 	}
 
 	header := &types.Header{

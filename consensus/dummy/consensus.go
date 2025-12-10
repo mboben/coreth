@@ -155,57 +155,6 @@ func verifyHeaderGasFields(config *params.ChainConfig, header *types.Header, par
 	}
 	if err := customheader.VerifyExtraPrefix(config, parent, header); err != nil {
 		return err
-		// --------------------------
-		// if config.IsCortina(header.Time) {
-		// 	if header.GasLimit != params.CortinaGasLimit {
-		// 		return fmt.Errorf("expected gas limit to be %d in Cortina, but found %d", params.CortinaGasLimit, header.GasLimit)
-		// 	}
-		// } else {
-		// 	if config.IsSongbirdCode() {
-		// 		// Verify that the gas limit is correct for the current phase
-		// 		if config.IsSongbirdTransition(header.Time) {
-		// 			if header.GasLimit != params.SgbTransitionGasLimit {
-		// 				return fmt.Errorf("expected gas limit to be %d in SgbTransition but found %d", params.SgbTransitionGasLimit, header.GasLimit)
-		// 			}
-		// 		} else if config.IsApricotPhase5(header.Time) {
-		// 			if header.GasLimit != params.SgbApricotPhase5GasLimit {
-		// 				return fmt.Errorf("expected gas limit to be %d in ApricotPhase5 but found %d", params.SgbApricotPhase5GasLimit, header.GasLimit)
-		// 			}
-		// 		} else if config.IsApricotPhase1(header.Time) {
-		// 			if header.GasLimit != params.ApricotPhase1GasLimit {
-		// 				return fmt.Errorf("expected gas limit to be %d in ApricotPhase1, but found %d", params.ApricotPhase1GasLimit, header.GasLimit)
-		// 			}
-		// 		} else {
-		// 			// Verify that the gas limit remains within allowed bounds
-		// 			diff := int64(parent.GasLimit) - int64(header.GasLimit)
-		// 			if diff < 0 {
-		// 				diff *= -1
-		// 			}
-		// 			limit := parent.GasLimit / params.GasLimitBoundDivisor
-
-		// 			if uint64(diff) >= limit || header.GasLimit < params.MinGasLimit {
-		// 				return fmt.Errorf("invalid gas limit: have %d, want %d += %d", header.GasLimit, parent.GasLimit, limit)
-		// 			}
-		// 		}
-		// 	} else {
-		// 		if config.IsApricotPhase1(header.Time) {
-		// 			if header.GasLimit != params.ApricotPhase1GasLimit {
-		// 				return fmt.Errorf("expected gas limit to be %d in ApricotPhase1, but found %d", params.ApricotPhase1GasLimit, header.GasLimit)
-		// 			}
-		// 		} else {
-		// 			// Verify that the gas limit remains within allowed bounds
-		// 			diff := int64(parent.GasLimit) - int64(header.GasLimit)
-		// 			if diff < 0 {
-		// 				diff *= -1
-		// 			}
-		// 			limit := parent.GasLimit / params.GasLimitBoundDivisor
-
-		// 			if uint64(diff) >= limit || header.GasLimit < params.MinGasLimit {
-		// 				return fmt.Errorf("invalid gas limit: have %d, want %d += %d", header.GasLimit, parent.GasLimit, limit)
-		// 			}
-		// 		}
-		// 	}
-		// ---------------------------------
 	}
 
 	// Verify header.BaseFee matches the expected value.
@@ -234,37 +183,6 @@ func verifyHeaderGasFields(config *params.ChainConfig, header *types.Header, par
 		}
 		return nil
 	}
-
-	// Enforce BlockGasCost constraints
-	// --------------------------------
-	// blockGasCostStep := ApricotPhase4BlockGasCostStep
-	// if config.IsApricotPhase5(header.Time) {
-	// 	blockGasCostStep = ApricotPhase5BlockGasCostStep
-	// }
-	// var apricotPhase4TargetBlockRate uint64
-	// if config.IsSongbirdCode() {
-	// 	apricotPhase4TargetBlockRate = SgbApricotPhase4TargetBlockRate
-	// } else {
-	// 	apricotPhase4TargetBlockRate = ApricotPhase4TargetBlockRate
-	// }
-	// expectedBlockGasCost := calcBlockGasCost(
-	// 	apricotPhase4TargetBlockRate,
-	// 	ApricotPhase4MinBlockGasCost,
-	// 	ApricotPhase4MaxBlockGasCost,
-	// 	blockGasCostStep,
-	// 	parent.BlockGasCost,
-	// 	parent.Time, header.Time,
-	// )
-	// if header.BlockGasCost == nil {
-	// 	return errBlockGasCostNil
-	// }
-	// if !header.BlockGasCost.IsUint64() {
-	// 	return errBlockGasCostTooLarge
-	// }
-	// if header.BlockGasCost.Cmp(expectedBlockGasCost) != 0 {
-	// 	return fmt.Errorf("invalid block gas cost: have %d, want %d", header.BlockGasCost, expectedBlockGasCost)
-	// }
-	// -------------------------------
 
 	// ExtDataGasUsed correctness is checked during block validation
 	// (when the validator has access to the block contents)
@@ -478,33 +396,6 @@ func (eng *DummyEngine) Finalize(chain consensus.ChainHeaderReader, block *types
 			return fmt.Errorf("invalid extDataGasUsed: have %d, want %d", blockExtDataGasUsed, extDataGasUsed)
 		}
 
-		// --------------------------
-		// blockGasCostStep := ApricotPhase4BlockGasCostStep
-		// if chain.Config().IsApricotPhase5(block.Time()) {
-		// 	blockGasCostStep = ApricotPhase5BlockGasCostStep
-		// }
-		// // Calculate the expected blockGasCost for this block.
-		// // Note: this is a deterministic transtion that defines an exact block fee for this block.
-		// var apricotPhase4TargetBlockRate uint64
-		// if chain.Config().IsSongbirdCode() {
-		// 	apricotPhase4TargetBlockRate = SgbApricotPhase4TargetBlockRate
-		// } else {
-		// 	apricotPhase4TargetBlockRate = ApricotPhase4TargetBlockRate
-		// }
-		// blockGasCost := calcBlockGasCost(
-		// 	apricotPhase4TargetBlockRate,
-		// 	ApricotPhase4MinBlockGasCost,
-		// 	ApricotPhase4MaxBlockGasCost,
-		// 	blockGasCostStep,
-		// 	parent.BlockGasCost,
-		// 	parent.Time, block.Time(),
-		// )
-		// // Verify the BlockGasCost set in the header matches the calculated value.
-		// if blockBlockGasCost := block.BlockGasCost(); blockBlockGasCost == nil || !blockBlockGasCost.IsUint64() || blockBlockGasCost.Cmp(blockGasCost) != 0 {
-		// 	return fmt.Errorf("invalid blockGasCost: have %d, want %d", blockBlockGasCost, blockGasCost)
-		// }
-		// ---------------------------
-
 		// Verify the block fee was paid.
 		if err := eng.verifyBlockFee(
 			block.BaseFee(),
@@ -548,28 +439,6 @@ func (eng *DummyEngine) FinalizeAndAssemble(chain consensus.ChainHeaderReader, h
 			header.ExtDataGasUsed = new(big.Int).Set(common.Big0)
 		}
 
-		// -------------------------------
-		// blockGasCostStep := ApricotPhase4BlockGasCostStep
-		// if chain.Config().IsApricotPhase5(header.Time) {
-		// 	blockGasCostStep = ApricotPhase5BlockGasCostStep
-		// }
-		// // Calculate the required block gas cost for this block.
-		// var apricotPhase4TargetBlockRate uint64
-		// if chain.Config().IsSongbirdCode() {
-		// 	apricotPhase4TargetBlockRate = SgbApricotPhase4TargetBlockRate
-		// } else {
-		// 	apricotPhase4TargetBlockRate = ApricotPhase4TargetBlockRate
-		// }
-		// header.BlockGasCost = calcBlockGasCost(
-		// 	apricotPhase4TargetBlockRate,
-		// 	ApricotPhase4MinBlockGasCost,
-		// 	ApricotPhase4MaxBlockGasCost,
-		// 	blockGasCostStep,
-		// 	parent.BlockGasCost,
-		// 	parent.Time, header.Time,
-		// )
-
-		// -----------------------------------------
 		// Verify that this block covers the block fee.
 		if err := eng.verifyBlockFee(
 			header.BaseFee,
