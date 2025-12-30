@@ -27,6 +27,8 @@
 package blobpool
 
 import (
+	"os"
+
 	"github.com/ethereum/go-ethereum/log"
 )
 
@@ -38,8 +40,8 @@ type Config struct {
 }
 
 // DefaultConfig contains the default configurations for the transaction pool.
-var DefaultConfig = Config{
-	Datadir:   "blobpool",
+var defaultConfig = Config{
+	Datadir:   "",                          // empty path == in-memory database (e.g. in tests)
 	Datacap:   10 * 1024 * 1024 * 1024 / 4, // TODO(karalabe): /4 handicap for rollout, gradually bump back up to 10GB
 	PriceBump: 100,                         // either have patience or be aggressive, no mushy ground
 }
@@ -49,12 +51,21 @@ var DefaultConfig = Config{
 func (config *Config) sanitize() Config {
 	conf := *config
 	if conf.Datacap < 1 {
-		log.Warn("Sanitizing invalid blobpool storage cap", "provided", conf.Datacap, "updated", DefaultConfig.Datacap)
-		conf.Datacap = DefaultConfig.Datacap
+		log.Warn("Sanitizing invalid blobpool storage cap", "provided", conf.Datacap, "updated", defaultConfig.Datacap)
+		conf.Datacap = defaultConfig.Datacap
 	}
 	if conf.PriceBump < 1 {
-		log.Warn("Sanitizing invalid blobpool price bump", "provided", conf.PriceBump, "updated", DefaultConfig.PriceBump)
-		conf.PriceBump = DefaultConfig.PriceBump
+		log.Warn("Sanitizing invalid blobpool price bump", "provided", conf.PriceBump, "updated", defaultConfig.PriceBump)
+		conf.PriceBump = defaultConfig.PriceBump
 	}
 	return conf
+}
+
+func GetDefaultConfig() Config {
+	config := defaultConfig
+	if os.Getenv("BLOB_POOL_DATADIR") != "" {
+		config.Datadir = os.Getenv("BLOB_POOL_DATADIR")
+	}
+	// TODO: check if not empty and not running in tests (in-memory)
+	return config
 }

@@ -4,6 +4,7 @@
 package evm
 
 import (
+	"github.com/ava-labs/coreth/core/txpool/blobpool"
 	"github.com/ava-labs/coreth/core/txpool/legacypool"
 	"github.com/ava-labs/coreth/plugin/evm/config"
 )
@@ -18,4 +19,17 @@ var defaultTxPoolConfig = config.TxPoolConfig{
 	AccountQueue: legacypool.DefaultConfig.AccountQueue,
 	GlobalQueue:  legacypool.DefaultConfig.GlobalQueue,
 	Lifetime:     legacypool.DefaultConfig.Lifetime,
+}
+
+// GetDefaultBlobPoolConfig creates [blobpool.DefaultConfig] to make a [config.BlobPoolConfig]
+// that can be passed to [config.Config.SetDefaults].
+// For Datadir it uses env variable BLOB_POOL_DATADIR if set, otherwise uses [blobpool.DefaultConfig.Datadir].
+func GetDefaultBlobPoolConfig() config.BlobPoolConfig {
+	defaultConfig := blobpool.GetDefaultConfig()
+	defaultBlobPoolConfig := config.BlobPoolConfig{
+		Datadir:   defaultConfig.Datadir,
+		Datacap:   defaultConfig.Datacap,
+		PriceBump: defaultConfig.PriceBump,
+	}
+	return defaultBlobPoolConfig
 }

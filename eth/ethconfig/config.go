@@ -64,9 +64,6 @@ var DefaultFullGPOSgbConfig = gasprice.Config{
 	MinGasUsed:          gasprice.SgbDefaultMinGasUsed,
 }
 
-// DefaultConfig contains default settings for use on the Avalanche main net.
-var DefaultConfig = NewDefaultConfig()
-
 func init() {
 	// Set the gas price percentile from the environment variable "GAS_PRICE_PERCENTILE"
 	if gasPricePercentileStr := os.Getenv("GAS_PRICE_PERCENTILE"); gasPricePercentileStr != "" {
@@ -91,7 +88,7 @@ func NewDefaultConfig() Config {
 		AcceptedCacheSize:         32,
 		Miner:                     miner.Config{},
 		TxPool:                    legacypool.DefaultConfig,
-		BlobPool:                  blobpool.DefaultConfig,
+		BlobPool:                  blobpool.GetDefaultConfig(),
 		RPCGasCap:                 25000000,
 		RPCEVMTimeout:             5 * time.Second,
 		GPO:                       DefaultFullGPOConfig,
@@ -109,7 +106,7 @@ func NewDefaultSgbConfig() Config {
 		AcceptedCacheSize:     32,
 		Miner:                 miner.Config{},
 		TxPool:                legacypool.DefaultConfig,
-		BlobPool:              blobpool.DefaultConfig,
+		BlobPool:              blobpool.GetDefaultConfig(),
 		RPCGasCap:             25000000,
 		RPCEVMTimeout:         5 * time.Second,
 		GPO:                   DefaultFullGPOSgbConfig,

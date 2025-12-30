@@ -88,7 +88,7 @@ func NewBackend(alloc types.GenesisAlloc, options ...func(nodeConf *node.Config,
 	// service to mutate with the options afterwards
 	nodeConf := node.DefaultConfig
 
-	ethConf := ethconfig.DefaultConfig
+	ethConf := ethconfig.NewDefaultConfig()
 	ethConf.Genesis = &core.Genesis{
 		Config: &chainConfig,
 		Alloc:  alloc,

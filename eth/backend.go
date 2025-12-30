@@ -42,6 +42,7 @@ import (
 	"github.com/ava-labs/coreth/core/rawdb"
 	"github.com/ava-labs/coreth/core/state/pruner"
 	"github.com/ava-labs/coreth/core/txpool"
+	"github.com/ava-labs/coreth/core/txpool/blobpool"
 	"github.com/ava-labs/coreth/core/txpool/legacypool"
 	"github.com/ava-labs/coreth/core/types"
 	"github.com/ava-labs/coreth/core/vm"
@@ -243,14 +244,17 @@ func New(
 
 	eth.bloomIndexer.Start(eth.blockchain)
 
-	// Uncomment the following to enable the new blobpool
-
-	// config.BlobPool.Datadir = ""
-	// blobPool := blobpool.New(config.BlobPool, &chainWithFinalBlock{eth.blockchain})
-
 	legacyPool := legacypool.New(config.TxPool, eth.blockchain)
 
-	eth.txPool, err = txpool.New(config.TxPool.PriceLimit, eth.blockchain, []txpool.SubPool{legacyPool}) //, blobPool})
+	txPools := []txpool.SubPool{legacyPool}
+	if config.Genesis.Config.ApricotPhase3BlockTimestamp != nil {
+		// Fails if AP3 is not enabled due to basefee calculation.
+		// Happens in tests
+		blobPool := blobpool.New(config.BlobPool, &chainWithFinalBlock{eth.blockchain})
+		txPools = append(txPools, blobPool)
+	}
+
+	eth.txPool, err = txpool.New(config.TxPool.PriceLimit, eth.blockchain, txPools)
 	if err != nil {
 		return nil, err
 	}

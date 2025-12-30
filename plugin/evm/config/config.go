@@ -163,6 +163,10 @@ type Config struct {
 	TxPoolGlobalQueue  uint64   `json:"tx-pool-global-queue"`
 	TxPoolLifetime     Duration `json:"tx-pool-lifetime"`
 
+	BlobPoolDatadir   string `json:"blob-pool-datadir"`
+	BlobPoolDatacap   uint64 `json:"blob-pool-datacap"`
+	BlobPoolPriceBump uint64 `json:"blob-pool-price-bump"`
+
 	APIMaxDuration           Duration      `json:"api-max-duration"`
 	WSCPURefillRate          Duration      `json:"ws-cpu-refill-rate"`
 	WSCPUMaxStored           Duration      `json:"ws-cpu-max-stored"`
@@ -259,12 +263,19 @@ type TxPoolConfig struct {
 	Lifetime     time.Duration
 }
 
+// Config are the configuration parameters of the blob transaction pool.
+type BlobPoolConfig struct {
+	Datadir   string
+	Datacap   uint64
+	PriceBump uint64
+}
+
 // EthAPIs returns an array of strings representing the Eth APIs that should be enabled
 func (c Config) EthAPIs() []string {
 	return c.EnabledEthAPIs
 }
 
-func (c *Config) SetDefaults(txPoolConfig TxPoolConfig) {
+func (c *Config) SetDefaults(txPoolConfig TxPoolConfig, blobPoolConfig BlobPoolConfig) {
 	c.EnabledEthAPIs = defaultEnabledAPIs
 	c.RPCGasCap = defaultRpcGasCap
 	c.RPCTxFeeCap = defaultRpcTxFeeCap
@@ -278,6 +289,11 @@ func (c *Config) SetDefaults(txPoolConfig TxPoolConfig) {
 	c.TxPoolAccountQueue = txPoolConfig.AccountQueue
 	c.TxPoolGlobalQueue = txPoolConfig.GlobalQueue
 	c.TxPoolLifetime.Duration = txPoolConfig.Lifetime
+
+	// BlobPool settings
+	c.BlobPoolDatadir = blobPoolConfig.Datadir
+	c.BlobPoolDatacap = blobPoolConfig.Datacap
+	c.BlobPoolPriceBump = blobPoolConfig.PriceBump
 
 	c.APIMaxDuration.Duration = defaultApiMaxDuration
 	c.WSCPURefillRate.Duration = defaultWsCpuRefillRate

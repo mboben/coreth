@@ -180,8 +180,6 @@ var (
 	errNilBaseFeeApricotPhase3       = errors.New("nil base fee is invalid after apricotPhase3")
 	errNilBlockGasCostApricotPhase4  = errors.New("nil blockGasCost is invalid after apricotPhase4")
 	errInvalidHeaderPredicateResults = errors.New("invalid header predicate results")
-	errImportTxsDisabled             = errors.New("import transactions are disabled")
-	errExportTxsDisabled             = errors.New("export transactions are disabled")
 )
 
 var originalStderr *os.File
@@ -350,7 +348,7 @@ func (vm *VM) Initialize(
 	fxs []*commonEng.Fx,
 	appSender commonEng.AppSender,
 ) error {
-	vm.config.SetDefaults(defaultTxPoolConfig)
+	vm.config.SetDefaults(defaultTxPoolConfig, GetDefaultBlobPoolConfig())
 	if len(configBytes) > 0 {
 		if err := json.Unmarshal(configBytes, &vm.config); err != nil {
 			return fmt.Errorf("failed to unmarshal config %s: %w", string(configBytes), err)
@@ -475,6 +473,10 @@ func (vm *VM) Initialize(
 	vm.ethConfig.TxPool.AccountQueue = vm.config.TxPoolAccountQueue
 	vm.ethConfig.TxPool.GlobalQueue = vm.config.TxPoolGlobalQueue
 	vm.ethConfig.TxPool.Lifetime = vm.config.TxPoolLifetime.Duration
+
+	vm.ethConfig.BlobPool.Datadir = vm.config.BlobPoolDatadir
+	vm.ethConfig.BlobPool.Datacap = vm.config.BlobPoolDatacap
+	vm.ethConfig.BlobPool.PriceBump = vm.config.BlobPoolPriceBump
 
 	vm.ethConfig.AllowUnfinalizedQueries = vm.config.AllowUnfinalizedQueries
 	vm.ethConfig.AllowUnprotectedTxs = vm.config.AllowUnprotectedTxs
