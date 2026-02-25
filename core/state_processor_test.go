@@ -63,7 +63,7 @@ func u64(val uint64) *uint64 { return &val }
 // blockchain imports bad blocks, meaning blocks which have valid headers but
 // contain invalid transactions
 func TestStateProcessorErrors(t *testing.T) {
-	cpcfg := *params.TestChainConfig
+	cpcfg := *params.TestFlareChainConfig
 	config := &cpcfg
 	config.ShanghaiTime = u64(0)
 	config.CancunTime = u64(0)

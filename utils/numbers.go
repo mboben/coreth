@@ -11,6 +11,9 @@ import (
 func NewUint64(val uint64) *uint64 { return &val }
 
 func TimeToNewUint64(time time.Time) *uint64 {
+	if time.IsZero() {
+		return nil
+	}
 	unix := uint64(time.Unix())
 	return NewUint64(unix)
 }

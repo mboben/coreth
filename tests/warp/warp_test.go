@@ -9,6 +9,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -71,6 +72,9 @@ type Subnet struct {
 }
 
 func TestE2E(t *testing.T) {
+	if os.Getenv("AVALANCHEGO_PATH") == "" {
+		t.Skip("skipping e2e test: AVALANCHEGO_PATH not set")
+	}
 	ginkgo.RunSpecs(t, "coreth warp e2e test")
 }
 

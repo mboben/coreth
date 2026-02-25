@@ -81,7 +81,7 @@ func testSetupGenesis(t *testing.T, scheme string) {
 	apricotPhase1Config := params.Copy(params.TestApricotPhase1Config)
 	params.GetExtra(&apricotPhase1Config).ApricotPhase1BlockTimestamp = utils.NewUint64(100)
 	var (
-		customghash = common.HexToHash("0x02cd6246f54563efaf38f0a1c9604899937999ae1d7b813872f77259a19917bf")
+		customghash = common.HexToHash("0x1099a11e9e454bd3ef31d688cf21936671966407bc330f051d754b5ce401e7ed")
 		customg     = Genesis{
 			Config: &apricotPhase1Config,
 			Alloc: types.GenesisAlloc{

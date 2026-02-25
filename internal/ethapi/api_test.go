@@ -108,14 +108,14 @@ func testTransactionMarshal(t *testing.T, tests []txData, config *params.ChainCo
 
 func TestTransaction_RoundTripRpcJSON(t *testing.T) {
 	var (
-		config = params.TestChainConfig
+		config = params.TestFlareChainConfig
 		tests  = allTransactionTypes(common.Address{0xde, 0xad}, config)
 	)
 	testTransactionMarshal(t, tests, config)
 }
 
 func TestTransactionBlobTx(t *testing.T) {
-	config := *params.TestChainConfig
+	config := *params.TestFlareChainConfig
 	// config.ShanghaiTime = new(uint64)
 	config.CancunTime = new(uint64)
 	tests := allBlobTxs(common.Address{0xde, 0xad}, &config)
@@ -1021,7 +1021,7 @@ func TestSignTransaction(t *testing.T) {
 		key, _  = crypto.HexToECDSA("8a1f9a8f95be41cd7ccb6168179afb4504aefe388d1e14474d32c45c72ce7b7a")
 		to      = crypto.PubkeyToAddress(key.PublicKey)
 		genesis = &core.Genesis{
-			Config: params.TestChainConfig,
+			Config: params.TestFlareChainConfig,
 			Alloc:  types.GenesisAlloc{},
 		}
 	)

@@ -22,7 +22,7 @@ import (
 // Test prioritized contract (Submitter) being partially refunded when fee is high
 func TestStateTransitionPrioritizedContract(t *testing.T) {
 	configs := []*params.ChainConfig{
-		params.TestChainConfig,
+		params.TestFlareChainConfig,
 	}
 
 	for _, config := range configs {

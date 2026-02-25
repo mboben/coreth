@@ -178,7 +178,7 @@ func TestFilters(t *testing.T) {
 		hash4 = common.BytesToHash([]byte("topic4"))
 
 		gspec = &core.Genesis{
-			Config: params.TestChainConfig,
+			Config: params.TestFlareChainConfig,
 			Alloc: types.GenesisAlloc{
 				addr:      {Balance: big.NewInt(0).Mul(big.NewInt(100), big.NewInt(params.Ether))},
 				contract:  {Balance: big.NewInt(0), Code: bytecode},
