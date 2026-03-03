@@ -38,6 +38,12 @@ func init() {
 	// See https://github.com/ava-labs/coreth/pull/999
 	c.SkipRegistrations(3)
 
+	errs.Add(
+		// Remote mining types
+		c.RegisterType(RemoteContainerRequest{}),
+		c.RegisterType(RemoteContainerResponse{}),
+	)
+
 	Codec.RegisterCodec(Version, c)
 
 	if errs.Errored() {

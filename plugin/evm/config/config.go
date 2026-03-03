@@ -174,6 +174,9 @@ type Config struct {
 
 	// Database Scheme
 	StateScheme string `json:"state-scheme"`
+
+	// Remote Mining
+	RemoteMiningNodeID string `json:"remote-mining-node-id"` // NodeID of remote miner (empty = disabled)
 }
 
 // GetConfig returns a new config object with the default values set and the

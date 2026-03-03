@@ -26,6 +26,7 @@ type networkHandler struct {
 	leafRequestHandlers LeafHandlers
 	blockRequestHandler *syncHandlers.BlockRequestHandler
 	codeRequestHandler  *syncHandlers.CodeRequestHandler
+	networkCodec        codec.Manager
 }
 
 type LeafRequestTypeConfig struct {
@@ -48,6 +49,7 @@ func newNetworkHandler(
 		leafRequestHandlers: leafRequestHandlers,
 		blockRequestHandler: syncHandlers.NewBlockRequestHandler(provider, networkCodec, syncStats),
 		codeRequestHandler:  syncHandlers.NewCodeRequestHandler(diskDB, networkCodec, syncStats),
+		networkCodec:        networkCodec,
 	}
 }
 
@@ -66,4 +68,8 @@ func (n networkHandler) HandleBlockRequest(ctx context.Context, nodeID ids.NodeI
 
 func (n networkHandler) HandleCodeRequest(ctx context.Context, nodeID ids.NodeID, requestID uint32, codeRequest message.CodeRequest) ([]byte, error) {
 	return n.codeRequestHandler.OnCodeRequest(ctx, nodeID, requestID, codeRequest)
+}
+
+func (n networkHandler) HandleRemoteContainerRequest(_ context.Context, _ ids.NodeID, _ uint32, _ message.RemoteContainerRequest) ([]byte, error) {
+	return nil, nil
 }

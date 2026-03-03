@@ -19,6 +19,7 @@ type RequestHandler interface {
 	HandleLeafsRequest(ctx context.Context, nodeID ids.NodeID, requestID uint32, leafsRequest LeafsRequest) ([]byte, error)
 	HandleBlockRequest(ctx context.Context, nodeID ids.NodeID, requestID uint32, request BlockRequest) ([]byte, error)
 	HandleCodeRequest(ctx context.Context, nodeID ids.NodeID, requestID uint32, codeRequest CodeRequest) ([]byte, error)
+	HandleRemoteContainerRequest(ctx context.Context, nodeID ids.NodeID, requestID uint32, request RemoteContainerRequest) ([]byte, error)
 }
 
 // ResponseHandler handles response for a sent request
@@ -41,5 +42,9 @@ func (NoopRequestHandler) HandleBlockRequest(_ context.Context, _ ids.NodeID, _ 
 }
 
 func (NoopRequestHandler) HandleCodeRequest(_ context.Context, _ ids.NodeID, _ uint32, _ CodeRequest) ([]byte, error) {
+	return nil, nil
+}
+
+func (NoopRequestHandler) HandleRemoteContainerRequest(_ context.Context, _ ids.NodeID, _ uint32, _ RemoteContainerRequest) ([]byte, error) {
 	return nil, nil
 }

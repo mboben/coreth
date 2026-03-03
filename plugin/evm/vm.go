@@ -257,6 +257,9 @@ type VM struct {
 	chainAlias string
 	// RPC handlers (should be stopped before closing chaindb)
 	rpcHandlers []interface{ Stop() }
+
+	// Remote mining
+	remoteMiner *RemoteMiner
 }
 
 // Initialize implements the snowman.ChainVM interface
@@ -858,6 +861,17 @@ func (vm *VM) initBlockBuilding() error {
 		vm.shutdownWg.Done()
 	}()
 
+	// Start remote miner if configured
+	if vm.config.RemoteMiningNodeID != "" {
+		remoteNodeID, err := ids.NodeIDFromString(vm.config.RemoteMiningNodeID)
+		if err != nil {
+			return fmt.Errorf("invalid remote-mining-node-id %q: %w", vm.config.RemoteMiningNodeID, err)
+		}
+		vm.remoteMiner = NewRemoteMiner(vm.Network, vm.networkCodec, remoteNodeID)
+		vm.remoteMiner.Start()
+		log.Info("Remote miner started", "remoteNodeID", remoteNodeID)
+	}
+
 	return nil
 }
 
@@ -889,6 +903,9 @@ func (vm *VM) Shutdown(context.Context) error {
 	if vm.cancel != nil {
 		vm.cancel()
 	}
+	if vm.remoteMiner != nil {
+		vm.remoteMiner.Stop()
+	}
 	vm.Network.Shutdown()
 	if err := vm.Client.Shutdown(); err != nil {
 		log.Error("error stopping state syncer", "err", err)
@@ -919,10 +936,28 @@ func (vm *VM) buildBlockWithContext(_ context.Context, proposerVMBlockCtx *block
 		ProposerVMBlockCtx: proposerVMBlockCtx,
 	}
 
-	block, err := vm.miner.GenerateBlock(predicateCtx)
-	vm.builder.handleGenerateBlock()
-	if err != nil {
-		return nil, fmt.Errorf("%w: %w", vmerrors.ErrGenerateBlockFailed, err)
+	// Try to use a remotely built block first, fall back to local generation.
+	var block *types.Block
+	if vm.remoteMiner != nil {
+		if containerBytes, ok := vm.remoteMiner.Dequeue(); ok {
+			ethBlock := new(types.Block)
+			if err := rlp.DecodeBytes(containerBytes, ethBlock); err != nil {
+				log.Warn("Failed to decode remote container, falling back to local block building", "err", err)
+			} else {
+				log.Info("Using remotely built block", "hash", ethBlock.Hash())
+				block = ethBlock
+			}
+		}
+	}
+	if block == nil {
+		var err error
+		block, err = vm.miner.GenerateBlock(predicateCtx)
+		vm.builder.handleGenerateBlock()
+		if err != nil {
+			return nil, fmt.Errorf("%w: %w", vmerrors.ErrGenerateBlockFailed, err)
+		}
+	} else {
+		vm.builder.handleGenerateBlock()
 	}
 
 	// Note: the status of block is set by ChainState
