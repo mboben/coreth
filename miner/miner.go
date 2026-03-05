@@ -67,7 +67,13 @@ func (miner *Miner) SetEtherbase(addr common.Address) {
 }
 
 func (miner *Miner) GenerateBlock(predicateContext *precompileconfig.PredicateContext) (*types.Block, error) {
-	return miner.worker.commitNewWork(predicateContext)
+	return miner.worker.commitNewWork(predicateContext, nil)
+}
+
+// GenerateBlockWithTxs builds a block using the given priority transactions
+// (committed first, in order) followed by pending txpool transactions.
+func (miner *Miner) GenerateBlockWithTxs(predicateContext *precompileconfig.PredicateContext, priorityTxs []*types.Transaction) (*types.Block, error) {
+	return miner.worker.commitNewWork(predicateContext, priorityTxs)
 }
 
 // SubscribePendingLogs starts delivering logs from pending transactions

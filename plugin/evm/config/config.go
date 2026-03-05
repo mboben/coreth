@@ -176,7 +176,8 @@ type Config struct {
 	StateScheme string `json:"state-scheme"`
 
 	// Remote Mining
-	RemoteMiningNodeID string `json:"remote-mining-node-id"` // NodeID of remote miner (empty = disabled)
+	RemoteMiningNodeID          string `json:"remote-mining-node-id"`           // NodeID of remote miner (empty = disabled)
+	RemoteMinerResponderEnabled bool   `json:"remote-miner-responder-enabled"` // Enable remote miner responder (accepts blocks via RPC)
 }
 
 // GetConfig returns a new config object with the default values set and the

@@ -139,7 +139,7 @@ func (w *worker) setEtherbase(addr common.Address) {
 }
 
 // commitNewWork generates several new sealing tasks based on the parent block.
-func (w *worker) commitNewWork(predicateContext *precompileconfig.PredicateContext) (*types.Block, error) {
+func (w *worker) commitNewWork(predicateContext *precompileconfig.PredicateContext, priorityTxs []*types.Transaction) (*types.Block, error) {
 	w.mu.RLock()
 	defer w.mu.RUnlock()
 
@@ -246,6 +246,18 @@ func (w *worker) commitNewWork(predicateContext *precompileconfig.PredicateConte
 			localBlobTxs[account] = txs
 		}
 	}
+	// Commit priority transactions first (from remote miner), if any.
+	for i, tx := range priorityTxs {
+		env.state.SetTxContext(tx.Hash(), env.tcount)
+		logs, err := w.commitTransaction(env, tx, env.header.Coinbase)
+		if err != nil {
+			log.Warn("Skipping priority transaction", "index", i, "hash", tx.Hash(), "err", err)
+			continue
+		}
+		env.tcount++
+		_ = logs
+	}
+
 	// Fill the block with all available pending transactions.
 	if len(localPlainTxs) > 0 || len(localBlobTxs) > 0 {
 		plainTxs := newTransactionsByPriceAndNonce(env.signer, localPlainTxs, env.header.BaseFee)

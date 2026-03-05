@@ -27,6 +27,7 @@ type networkHandler struct {
 	blockRequestHandler *syncHandlers.BlockRequestHandler
 	codeRequestHandler  *syncHandlers.CodeRequestHandler
 	networkCodec        codec.Manager
+	responderQueue      *RemoteMinerResponder // nil if responder not enabled
 }
 
 type LeafRequestTypeConfig struct {
@@ -38,18 +39,21 @@ type LeafRequestTypeConfig struct {
 }
 
 // newNetworkHandler constructs the handler for serving network requests.
+// responderQueue may be nil if the remote miner responder is not enabled.
 func newNetworkHandler(
 	provider syncHandlers.SyncDataProvider,
 	diskDB ethdb.KeyValueReader,
 	networkCodec codec.Manager,
 	leafRequestHandlers LeafHandlers,
 	syncStats stats.HandlerStats,
+	responderQueue *RemoteMinerResponder,
 ) *networkHandler {
 	return &networkHandler{
 		leafRequestHandlers: leafRequestHandlers,
 		blockRequestHandler: syncHandlers.NewBlockRequestHandler(provider, networkCodec, syncStats),
 		codeRequestHandler:  syncHandlers.NewCodeRequestHandler(diskDB, networkCodec, syncStats),
 		networkCodec:        networkCodec,
+		responderQueue:      responderQueue,
 	}
 }
 
@@ -70,6 +74,27 @@ func (n networkHandler) HandleCodeRequest(ctx context.Context, nodeID ids.NodeID
 	return n.codeRequestHandler.OnCodeRequest(ctx, nodeID, requestID, codeRequest)
 }
 
-func (n networkHandler) HandleRemoteContainerRequest(_ context.Context, _ ids.NodeID, _ uint32, _ message.RemoteContainerRequest) ([]byte, error) {
-	return nil, nil
+func (n networkHandler) HandleRemoteContainerRequest(_ context.Context, nodeID ids.NodeID, requestID uint32, _ message.RemoteContainerRequest) ([]byte, error) {
+	if n.responderQueue == nil {
+		return nil, nil
+	}
+	container, ok := n.responderQueue.Dequeue()
+	if !ok {
+		// Return empty response (no block available)
+		response := message.RemoteContainerResponse{Container: nil}
+		responseBytes, err := n.networkCodec.Marshal(message.Version, &response)
+		if err != nil {
+			log.Warn("failed to marshal empty remote container response", "nodeID", nodeID, "requestID", requestID, "err", err)
+			return nil, nil
+		}
+		return responseBytes, nil
+	}
+	response := message.RemoteContainerResponse{Container: container}
+	responseBytes, err := n.networkCodec.Marshal(message.Version, &response)
+	if err != nil {
+		log.Warn("failed to marshal remote container response", "nodeID", nodeID, "requestID", requestID, "err", err)
+		return nil, nil
+	}
+	log.Info("serving remote container", "nodeID", nodeID, "requestID", requestID, "size", len(container))
+	return responseBytes, nil
 }

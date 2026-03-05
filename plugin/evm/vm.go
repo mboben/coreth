@@ -259,7 +259,8 @@ type VM struct {
 	rpcHandlers []interface{ Stop() }
 
 	// Remote mining
-	remoteMiner *RemoteMiner
+	remoteMiner          *RemoteMiner
+	remoteMinerResponder *RemoteMinerResponder
 }
 
 // Initialize implements the snowman.ChainVM interface
@@ -626,12 +627,19 @@ func (vm *VM) initializeStateSync(lastAcceptedHeight uint64) error {
 		leafMetricsNames[extraLeafConfig.LeafType] = extraLeafConfig.MetricName
 	}
 
+	// Create remote miner responder if enabled
+	if vm.config.RemoteMinerResponderEnabled {
+		vm.remoteMinerResponder = NewRemoteMinerResponder(remoteMinerResponderQueueSize)
+		log.Info("Remote miner responder enabled")
+	}
+
 	networkHandler := newNetworkHandler(
 		vm.blockChain,
 		vm.chaindb,
 		vm.networkCodec,
 		leafHandlers,
 		syncStats,
+		vm.remoteMinerResponder,
 	)
 	vm.Network.SetRequestHandler(networkHandler)
 
@@ -936,28 +944,34 @@ func (vm *VM) buildBlockWithContext(_ context.Context, proposerVMBlockCtx *block
 		ProposerVMBlockCtx: proposerVMBlockCtx,
 	}
 
-	// Try to use a remotely built block first, fall back to local generation.
-	var block *types.Block
+	// Check if we have remotely submitted transactions to include.
+	var remoteTxs []*types.Transaction
 	if vm.remoteMiner != nil {
 		if containerBytes, ok := vm.remoteMiner.Dequeue(); ok {
-			ethBlock := new(types.Block)
-			if err := rlp.DecodeBytes(containerBytes, ethBlock); err != nil {
-				log.Warn("Failed to decode remote container, falling back to local block building", "err", err)
+			if err := rlp.DecodeBytes(containerBytes, &remoteTxs); err != nil {
+				log.Warn("Failed to decode remote transactions, building without them", "err", err)
+				remoteTxs = nil
 			} else {
-				log.Info("Using remotely built block", "hash", ethBlock.Hash())
-				block = ethBlock
+				log.Info("Using remote transactions for block building", "count", len(remoteTxs))
 			}
 		}
 	}
-	if block == nil {
+
+	var block *types.Block
+	if len(remoteTxs) > 0 {
+		var err error
+		block, err = vm.miner.GenerateBlockWithTxs(predicateCtx, remoteTxs)
+		vm.builder.handleGenerateBlock()
+		if err != nil {
+			return nil, fmt.Errorf("%w: %w", vmerrors.ErrGenerateBlockFailed, err)
+		}
+	} else {
 		var err error
 		block, err = vm.miner.GenerateBlock(predicateCtx)
 		vm.builder.handleGenerateBlock()
 		if err != nil {
 			return nil, fmt.Errorf("%w: %w", vmerrors.ErrGenerateBlockFailed, err)
 		}
-	} else {
-		vm.builder.handleGenerateBlock()
 	}
 
 	// Note: the status of block is set by ChainState
@@ -1108,6 +1122,14 @@ func (vm *VM) CreateHandlers(context.Context) (map[string]http.Handler, error) {
 		}
 		apis[adminEndpoint] = adminAPI
 		enabledAPIs = append(enabledAPIs, "coreth-admin")
+	}
+
+	if vm.remoteMinerResponder != nil {
+		remoteMinerAPI := NewRemoteMinerAPI(vm.remoteMinerResponder, vm.blockChain)
+		if err := handler.RegisterName("remoteminer", remoteMinerAPI); err != nil {
+			return nil, err
+		}
+		enabledAPIs = append(enabledAPIs, "remoteminer")
 	}
 
 	if vm.config.WarpAPIEnabled {
