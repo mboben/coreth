@@ -491,7 +491,6 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 		return nil, fmt.Errorf("%w: have %d, want %d", ErrIntrinsicGas, st.gasRemaining, gas)
 	}
 	st.gasRemaining -= gas
-	log.Info("GAS_DEBUG TransitionDb after intrinsic", "tx", msg.Nonce, "intrinsicGas", gas, "initialGas", st.initialGas, "gasRemaining", st.gasRemaining, "from", msg.From, "to", msg.To)
 
 	// Check clause 6
 	value, overflow := uint256.FromBig(msg.Value)
@@ -528,7 +527,6 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 		return nil, err
 	}
 
-	gasBeforeExec := st.gasRemaining
 	if contractCreation {
 		ret, _, st.gasRemaining, vmerr = st.evm.Create(sender, msg.Data, st.gasRemaining, value)
 	} else {
@@ -543,13 +541,11 @@ func (st *StateTransition) TransitionDb() (*ExecutionResult, error) {
 			}
 		}
 	}
-	log.Info("GAS_DEBUG TransitionDb after exec", "gasBeforeExec", gasBeforeExec, "gasRemaining", st.gasRemaining, "gasUsedByExec", gasBeforeExec-st.gasRemaining, "vmerr", vmerr, "isMerge", rules.IsMerge, "isShanghai", rules.IsShanghai, "isCancun", rules.IsCancun, "isLondon", rules.IsLondon)
 	price, overflow := uint256.FromBig(msg.GasPrice)
 	if overflow {
 		return nil, ErrGasUintOverflow
 	}
 	gasRefund := st.refundGas(rulesExtra.IsApricotPhase1)
-	log.Info("GAS_DEBUG TransitionDb after refund", "gasRefund", gasRefund, "gasRemaining", st.gasRemaining, "gasUsed", st.gasUsed())
 
 	if vmerr == nil && IsPrioritisedContractCall(chainID, timestamp, msg.To, msg.Data, ret, st.initialGas) {
 		nominalGasUsed := ethparams.TxGas // 21000
