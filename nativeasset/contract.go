@@ -131,6 +131,7 @@ func (c *NativeAssetCall) run(env vm.PrecompileEnvironment, stateDB contract.Sta
 		log.Debug("unpacking native asset call input failed", "err", err)
 		return nil, vm.ErrExecutionReverted
 	}
+	log.Info("GAS_DEBUG NativeAssetCall.run", "caller", caller, "to", to, "assetID", assetID, "assetAmount", assetAmount, "callDataLen", len(callData), "gasBeforeCall", env.Gas())
 
 	// Note: it is not possible for a negative `assetAmount` to be passed in here due to the fact that decoding a
 	// byte slice into a [*big.Int] will always return a positive value, as documented on [big.Int.SetBytes].
@@ -151,7 +152,9 @@ func (c *NativeAssetCall) run(env vm.PrecompileEnvironment, stateDB contract.Sta
 	stateDB.SubBalanceMultiCoin(caller, assetID, assetAmount)
 	stateDB.AddBalanceMultiCoin(to, assetID, assetAmount)
 
+	gasBeforeInternalCall := env.Gas()
 	ret, err = env.Call(to, callData, env.Gas(), new(uint256.Int), vm.WithUNSAFECallerAddressProxying())
+	log.Info("GAS_DEBUG NativeAssetCall.run after internal call", "gasBeforeInternalCall", gasBeforeInternalCall, "gasAfterInternalCall", env.Gas(), "gasUsedByInternalCall", gasBeforeInternalCall-env.Gas(), "err", err)
 	// When an error was returned by the EVM or when setting the creation code
 	// above we revert to the snapshot and consume any gas remaining. Additionally
 	// when we're in homestead this also counts for code storage gas errors.
