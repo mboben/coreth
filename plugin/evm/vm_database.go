@@ -30,6 +30,10 @@ func (vm *VM) initializeDBs(db avalanchedatabase.Database) {
 	// that warp signatures are committed to the database atomically with
 	// the last accepted block.
 	vm.warpDB = prefixdb.New(warpPrefix, db)
+	// blobSidecarDB stores blob sidecars in a separate prefix to isolate
+	// from chain data. Blob data is pruned independently.
+	vm.blobSidecarDB = prefixdb.New(blobSidecarPrefix, db)
+	vm.blobSidecarEthDB = database.WrapDatabase(vm.blobSidecarDB)
 }
 
 func (vm *VM) inspectDatabases() error {

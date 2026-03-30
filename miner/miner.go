@@ -70,6 +70,13 @@ func (miner *Miner) GenerateBlock(predicateContext *precompileconfig.PredicateCo
 	return miner.worker.commitNewWork(predicateContext)
 }
 
+// LastSidecars returns the blob sidecars and their corresponding transaction hashes
+// from the most recently built block. Returns nil slices if no blob transactions
+// were included.
+func (miner *Miner) LastSidecars() ([]*types.BlobTxSidecar, []common.Hash) {
+	return miner.worker.lastSidecars, miner.worker.lastBlobTxHashes
+}
+
 // SubscribePendingLogs starts delivering logs from pending transactions
 // to the given channel.
 func (miner *Miner) SubscribePendingLogs(ch chan<- []*types.Log) event.Subscription {

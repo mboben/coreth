@@ -26,6 +26,7 @@ import (
 	"github.com/ava-labs/coreth/core"
 	"github.com/ava-labs/coreth/params"
 	"github.com/ava-labs/coreth/params/extras"
+	"github.com/ava-labs/coreth/plugin/evm/customrawdb"
 	"github.com/ava-labs/coreth/plugin/evm/customtypes"
 	"github.com/ava-labs/coreth/plugin/evm/extension"
 	"github.com/ava-labs/coreth/plugin/evm/header"
@@ -95,6 +96,22 @@ func (b *wrappedBlock) Accept(context.Context) error {
 	}
 	if err := vm.blockChain.Accept(b.ethBlock); err != nil {
 		return fmt.Errorf("chain could not accept %s: %w", blkID, err)
+	}
+
+	// Fetch blob sidecars from peers if this block has blob txs and we don't have them.
+	// This is for observation (non-validator) nodes that don't build blocks.
+	if vm.config.BlobPoolEnabled && vm.blobFetcher != nil {
+		if blockHasBlobTxs(b.ethBlock) && !customrawdb.HasBlobSidecars(vm.blobSidecarEthDB, b.ethBlock.Hash()) {
+			blockHash := b.ethBlock.Hash()
+			blockNum := b.ethBlock.NumberU64()
+			go func() {
+				fetchCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+				defer cancel()
+				if err := vm.blobFetcher.FetchBlobSidecars(fetchCtx, blockHash, blockNum); err != nil {
+					log.Debug("Failed to fetch blob sidecars on accept", "block", blockNum, "err", err)
+				}
+			}()
+		}
 	}
 
 	if err := vm.PutLastAcceptedID(blkID); err != nil {

@@ -113,6 +113,11 @@ type worker struct {
 	coinbase   common.Address
 	clock      *mockable.Clock // Allows us mock the clock for testing
 	beaconRoot *common.Hash    // TODO: set to empty hash, retained for upstream compatibility and future use
+
+	// lastSidecars stores the blob sidecars from the most recently built block.
+	// These are consumed by the VM layer to persist blob data.
+	lastSidecars     []*types.BlobTxSidecar
+	lastBlobTxHashes []common.Hash
 }
 
 func newWorker(config *Config, chainConfig *params.ChainConfig, engine consensus.Engine, eth Backend, mux *event.TypeMux, clock *mockable.Clock) *worker {
@@ -142,6 +147,10 @@ func (w *worker) setEtherbase(addr common.Address) {
 func (w *worker) commitNewWork(predicateContext *precompileconfig.PredicateContext) (*types.Block, error) {
 	w.mu.RLock()
 	defer w.mu.RUnlock()
+
+	// Clear sidecars from the previous block build.
+	w.lastSidecars = nil
+	w.lastBlobTxHashes = nil
 
 	tstart := w.clock.Time()
 	timestamp := uint64(tstart.Unix())
@@ -548,6 +557,15 @@ func (w *worker) handleResult(env *environment, block *types.Block, createdAt ti
 		"uncles", 0, "txs", env.tcount,
 		"gas", block.GasUsed(), "fees", feesInEther,
 		"elapsed", common.PrettyDuration(time.Since(env.start)))
+
+	// Save blob sidecars for consumption by the VM layer.
+	w.lastSidecars = env.sidecars
+	w.lastBlobTxHashes = nil
+	for _, tx := range env.txs {
+		if tx.Type() == types.BlobTxType {
+			w.lastBlobTxHashes = append(w.lastBlobTxHashes, tx.Hash())
+		}
+	}
 
 	// Note: the miner no longer emits a NewMinedBlock event. Instead the caller
 	// is responsible for running any additional verification and then inserting

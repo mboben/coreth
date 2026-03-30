@@ -130,10 +130,11 @@ const (
 var (
 	// Set last accepted key to be longer than the keys used to store accepted block IDs.
 	lastAcceptedKey = []byte("last_accepted_key")
-	acceptedPrefix  = []byte("snowman_accepted")
-	metadataPrefix  = []byte("metadata")
-	warpPrefix      = []byte("warp")
-	ethDBPrefix     = []byte("ethdb")
+	acceptedPrefix    = []byte("snowman_accepted")
+	metadataPrefix    = []byte("metadata")
+	warpPrefix        = []byte("warp")
+	ethDBPrefix       = []byte("ethdb")
+	blobSidecarPrefix = []byte("blobsidecars")
 )
 
 var (
@@ -218,6 +219,13 @@ type VM struct {
 	// [warpDB] is used to store warp message signatures
 	// set to a prefixDB with the prefix [warpPrefix]
 	warpDB database.Database
+
+	// [blobSidecarDB] stores blob sidecars in a separate prefix DB (avalanchego database)
+	blobSidecarDB database.Database
+	// [blobSidecarEthDB] wraps blobSidecarDB as ethdb.KeyValueStore for use by blob components
+	blobSidecarEthDB ethdb.KeyValueStore
+	// blobFetcher requests blob sidecars from peers
+	blobFetcher *BlobFetcher
 
 	// builderLock is used to synchronize access to the block builder,
 	// as it is uninitialized at first and is only initialized when onNormalOperationsStarted is called.
@@ -397,6 +405,14 @@ func (vm *VM) Initialize(
 	vm.ethConfig.SkipTxIndexing = vm.config.SkipTxIndexing
 	vm.ethConfig.StateScheme = vm.config.StateScheme
 
+	// Enable blob pool if configured. The Datadir defaults to "" (in-memory).
+	// Set BLOB_POOL_DATADIR env var for persistent on-disk storage in production.
+	if vm.config.BlobPoolEnabled {
+		if dir := os.Getenv("BLOB_POOL_DATADIR"); dir != "" {
+			vm.ethConfig.BlobPool.Datadir = dir
+		}
+	}
+
 	if vm.ethConfig.StateScheme == customrawdb.FirewoodScheme {
 		log.Warn("Firewood state scheme is enabled")
 		log.Warn("This is untested in production, use at your own risk")
@@ -475,6 +491,16 @@ func (vm *VM) Initialize(
 	// Add p2p warp message warpHandler
 	warpHandler := acp118.NewCachedHandler(meteredCache, vm.warpBackend, vm.ctx.WarpSigner)
 	vm.Network.AddHandler(p2p.SignatureRequestHandlerID, warpHandler)
+
+	// Register blob sidecar p2p handler and fetcher
+	if vm.config.BlobPoolEnabled {
+		blobHandler := &BlobSidecarHandler{db: vm.blobSidecarEthDB}
+		vm.Network.AddHandler(BlobSidecarRequestHandlerID, blobHandler)
+		vm.blobFetcher = &BlobFetcher{
+			client: vm.Network.NewClient(BlobSidecarRequestHandlerID),
+			db:     vm.blobSidecarEthDB,
+		}
+	}
 
 	vm.stateSyncDone = make(chan struct{})
 
@@ -858,6 +884,35 @@ func (vm *VM) initBlockBuilding() error {
 		vm.shutdownWg.Done()
 	}()
 
+	// Start blob sidecar backfiller and pruner if blob pool is enabled
+	if vm.config.BlobPoolEnabled {
+		if vm.config.BlobBackfillEnabled && vm.blobFetcher != nil {
+			backfiller := &BlobBackfiller{
+				blockchain: vm.blockChain,
+				db:         vm.blobSidecarEthDB,
+				fetcher:    vm.blobFetcher,
+				retention:  vm.config.BlobRetentionBlocks,
+			}
+			vm.shutdownWg.Add(1)
+			go func() {
+				defer vm.shutdownWg.Done()
+				backfiller.Run(ctx)
+			}()
+		}
+
+		pruner := &BlobPruner{
+			db:         vm.blobSidecarEthDB,
+			blockchain: vm.blockChain,
+			retention:  vm.config.BlobRetentionBlocks,
+			interval:   vm.config.BlobPruneInterval.Duration,
+		}
+		vm.shutdownWg.Add(1)
+		go func() {
+			defer vm.shutdownWg.Done()
+			pruner.Run(ctx)
+		}()
+	}
+
 	return nil
 }
 
@@ -923,6 +978,16 @@ func (vm *VM) buildBlockWithContext(_ context.Context, proposerVMBlockCtx *block
 	vm.builder.handleGenerateBlock()
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", vmerrors.ErrGenerateBlockFailed, err)
+	}
+
+	// Store blob sidecars for this block (validator side)
+	if vm.config.BlobPoolEnabled {
+		if sidecars, txHashes := vm.miner.LastSidecars(); len(sidecars) > 0 {
+			entries := buildBlobSidecarEntries(block, sidecars, txHashes)
+			if writeErr := customrawdb.WriteBlobSidecars(vm.blobSidecarEthDB, block.Hash(), block.NumberU64(), entries); writeErr != nil {
+				log.Error("Failed to store blob sidecars", "block", block.NumberU64(), "err", writeErr)
+			}
+		}
 	}
 
 	// Note: the status of block is set by ChainState
@@ -1083,6 +1148,14 @@ func (vm *VM) CreateHandlers(context.Context) (map[string]http.Handler, error) {
 			return nil, err
 		}
 		enabledAPIs = append(enabledAPIs, "warp")
+	}
+
+	if vm.config.BlobAPIEnabled {
+		blobAPI := &BlobAPI{db: vm.blobSidecarEthDB, blockchain: vm.blockChain}
+		if err := handler.RegisterName("blob", blobAPI); err != nil {
+			return nil, err
+		}
+		enabledAPIs = append(enabledAPIs, "blob")
 	}
 
 	log.Info("enabling apis",

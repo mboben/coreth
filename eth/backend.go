@@ -41,6 +41,7 @@ import (
 	"github.com/ava-labs/coreth/core/bloombits"
 	"github.com/ava-labs/coreth/core/state/pruner"
 	"github.com/ava-labs/coreth/core/txpool"
+	"github.com/ava-labs/coreth/core/txpool/blobpool"
 	"github.com/ava-labs/coreth/core/txpool/legacypool"
 	"github.com/ava-labs/coreth/eth/ethconfig"
 	"github.com/ava-labs/coreth/eth/filters"
@@ -253,14 +254,16 @@ func New(
 
 	eth.bloomIndexer.Start(eth.blockchain)
 
-	// Uncomment the following to enable the new blobpool
-
-	// config.BlobPool.Datadir = ""
-	// blobPool := blobpool.New(config.BlobPool, &chainWithFinalBlock{eth.blockchain})
-
 	legacyPool := legacypool.New(config.TxPool, eth.blockchain)
 
-	eth.txPool, err = txpool.New(config.TxPool.PriceLimit, eth.blockchain, []txpool.SubPool{legacyPool}) //, blobPool})
+	var subPools []txpool.SubPool
+	subPools = append(subPools, legacyPool)
+	if config.BlobPool.Datadir != "" {
+		blobPool := blobpool.New(config.BlobPool, &chainWithFinalBlock{eth.blockchain})
+		subPools = append(subPools, blobPool)
+	}
+
+	eth.txPool, err = txpool.New(config.TxPool.PriceLimit, eth.blockchain, subPools)
 	if err != nil {
 		return nil, err
 	}

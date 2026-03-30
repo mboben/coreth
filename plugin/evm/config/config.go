@@ -174,6 +174,13 @@ type Config struct {
 
 	// Database Scheme
 	StateScheme string `json:"state-scheme"`
+
+	// Blob Transaction Settings
+	BlobPoolEnabled     bool     `json:"blob-pool-enabled"`
+	BlobAPIEnabled      bool     `json:"blob-api-enabled"`
+	BlobRetentionBlocks uint64   `json:"blob-retention-blocks"`  // Number of blocks to retain blob sidecars (default: 604800, ~14 days at 2s blocks)
+	BlobPruneInterval   Duration `json:"blob-prune-interval"`    // How often to run blob pruning (default: 10m)
+	BlobBackfillEnabled bool     `json:"blob-backfill-enabled"`  // Whether to backfill missing blobs on startup
 }
 
 // GetConfig returns a new config object with the default values set and the
