@@ -27,11 +27,8 @@ import (
 	"github.com/ava-labs/libevm/core/types"
 	"github.com/ava-labs/libevm/log"
 	"github.com/ava-labs/libevm/trie"
-	"github.com/holiman/uint256"
 	"github.com/stretchr/testify/require"
 
-	"github.com/ava-labs/coreth/consensus/dummy"
-	"github.com/ava-labs/coreth/constants"
 	"github.com/ava-labs/coreth/core"
 	"github.com/ava-labs/coreth/eth"
 	"github.com/ava-labs/coreth/miner"
@@ -1681,51 +1678,6 @@ func TestParentBeaconRootBlock(t *testing.T) {
 	}
 }
 
-func TestNoBlobsAllowed(t *testing.T) {
-	ctx := context.Background()
-	require := require.New(t)
-
-	gspec := new(core.Genesis)
-	require.NoError(json.Unmarshal([]byte(genesisJSONCancun), gspec))
-
-	// Make one block with a single blob tx
-	signer := types.NewCancunSigner(gspec.Config.ChainID)
-	blockGen := func(_ int, b *core.BlockGen) {
-		b.SetCoinbase(constants.BlackholeAddr)
-		fee := big.NewInt(500)
-		fee.Add(fee, b.BaseFee())
-		tx, err := types.SignTx(types.NewTx(&types.BlobTx{
-			Nonce:      0,
-			GasTipCap:  uint256.NewInt(1),
-			GasFeeCap:  uint256.MustFromBig(fee),
-			Gas:        ethparams.TxGas,
-			To:         vmtest.TestEthAddrs[0],
-			BlobFeeCap: uint256.NewInt(1),
-			BlobHashes: []common.Hash{{1}}, // This blob is expected to cause verification to fail
-			Value:      new(uint256.Int),
-		}), signer, vmtest.TestKeys[0].ToECDSA())
-		require.NoError(err)
-		b.AddTx(tx)
-	}
-	// FullFaker used to skip header verification so we can generate a block with blobs
-	_, blocks, _, err := core.GenerateChainWithGenesis(gspec, dummy.NewFullFaker(), 1, 10, blockGen)
-	require.NoError(err)
-
-	// Create a VM with the genesis (will use header verification)
-	vm := newDefaultTestVM()
-	vmtest.SetupTestVM(t, vm, vmtest.TestVMConfig{
-		GenesisJSON: genesisJSONCancun,
-	})
-	defer func() { require.NoError(vm.Shutdown(ctx)) }()
-
-	// Verification should fail
-	extendedBlock, err := wrapBlock(blocks[0], vm)
-	require.NoError(err)
-	_, err = vm.ParseBlock(ctx, extendedBlock.Bytes())
-	require.ErrorContains(err, "blobs not enabled on avalanche networks")
-	err = extendedBlock.Verify(ctx)
-	require.ErrorContains(err, "blobs not enabled on avalanche networks")
-}
 
 func TestBuildBlockWithInsufficientCapacity(t *testing.T) {
 	ctx := context.Background()

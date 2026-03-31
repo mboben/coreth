@@ -405,12 +405,10 @@ func (vm *VM) Initialize(
 	vm.ethConfig.SkipTxIndexing = vm.config.SkipTxIndexing
 	vm.ethConfig.StateScheme = vm.config.StateScheme
 
-	// Enable blob pool if configured. The Datadir defaults to "" (in-memory).
+	// The blob pool Datadir defaults to "" (in-memory).
 	// Set BLOB_POOL_DATADIR env var for persistent on-disk storage in production.
-	if vm.config.BlobPoolEnabled {
-		if dir := os.Getenv("BLOB_POOL_DATADIR"); dir != "" {
-			vm.ethConfig.BlobPool.Datadir = dir
-		}
+	if dir := os.Getenv("BLOB_POOL_DATADIR"); dir != "" {
+		vm.ethConfig.BlobPool.Datadir = dir
 	}
 
 	if vm.ethConfig.StateScheme == customrawdb.FirewoodScheme {
@@ -492,14 +490,13 @@ func (vm *VM) Initialize(
 	warpHandler := acp118.NewCachedHandler(meteredCache, vm.warpBackend, vm.ctx.WarpSigner)
 	vm.Network.AddHandler(p2p.SignatureRequestHandlerID, warpHandler)
 
-	// Register blob sidecar p2p handler and fetcher
-	if vm.config.BlobPoolEnabled {
-		blobHandler := &BlobSidecarHandler{db: vm.blobSidecarEthDB}
-		vm.Network.AddHandler(BlobSidecarRequestHandlerID, blobHandler)
-		vm.blobFetcher = &BlobFetcher{
-			client: vm.Network.NewClient(BlobSidecarRequestHandlerID),
-			db:     vm.blobSidecarEthDB,
-		}
+	// Register blob sidecar p2p handler and fetcher on all nodes so every node
+	// can serve and request sidecars. This ensures all validators have all sidecars.
+	blobHandler := &BlobSidecarHandler{db: vm.blobSidecarEthDB}
+	vm.Network.AddHandler(BlobSidecarRequestHandlerID, blobHandler)
+	vm.blobFetcher = &BlobFetcher{
+		client: vm.Network.NewClient(BlobSidecarRequestHandlerID),
+		db:     vm.blobSidecarEthDB,
 	}
 
 	vm.stateSyncDone = make(chan struct{})
@@ -884,32 +881,31 @@ func (vm *VM) initBlockBuilding() error {
 		vm.shutdownWg.Done()
 	}()
 
-	// Start blob sidecar backfiller and pruner if blob pool is enabled
-	if vm.config.BlobPoolEnabled {
-		if vm.config.BlobBackfillEnabled && vm.blobFetcher != nil {
-			backfiller := &BlobBackfiller{
-				blockchain: vm.blockChain,
-				db:         vm.blobSidecarEthDB,
-				fetcher:    vm.blobFetcher,
-				retention:  vm.config.BlobRetentionBlocks,
-			}
-			vm.shutdownWg.Add(1)
-			go func() {
-				defer vm.shutdownWg.Done()
-				backfiller.Run(ctx)
-			}()
-		}
+	// Always run the blob pruner since all nodes store sidecars at build time.
+	blobPruner := &BlobPruner{
+		db:         vm.blobSidecarEthDB,
+		blockchain: vm.blockChain,
+		retention:  vm.config.BlobRetentionBlocks,
+		interval:   vm.config.BlobPruneInterval.Duration,
+	}
+	vm.shutdownWg.Add(1)
+	go func() {
+		defer vm.shutdownWg.Done()
+		blobPruner.Run(ctx)
+	}()
 
-		pruner := &BlobPruner{
-			db:         vm.blobSidecarEthDB,
+	// Start blob sidecar backfiller on all nodes so validators catch up after restarts.
+	if vm.config.BlobBackfillEnabled && vm.blobFetcher != nil {
+		backfiller := &BlobBackfiller{
 			blockchain: vm.blockChain,
+			db:         vm.blobSidecarEthDB,
+			fetcher:    vm.blobFetcher,
 			retention:  vm.config.BlobRetentionBlocks,
-			interval:   vm.config.BlobPruneInterval.Duration,
 		}
 		vm.shutdownWg.Add(1)
 		go func() {
 			defer vm.shutdownWg.Done()
-			pruner.Run(ctx)
+			backfiller.Run(ctx)
 		}()
 	}
 
@@ -980,13 +976,11 @@ func (vm *VM) buildBlockWithContext(_ context.Context, proposerVMBlockCtx *block
 		return nil, fmt.Errorf("%w: %w", vmerrors.ErrGenerateBlockFailed, err)
 	}
 
-	// Store blob sidecars for this block (validator side)
-	if vm.config.BlobPoolEnabled {
-		if sidecars, txHashes := vm.miner.LastSidecars(); len(sidecars) > 0 {
-			entries := buildBlobSidecarEntries(block, sidecars, txHashes)
-			if writeErr := customrawdb.WriteBlobSidecars(vm.blobSidecarEthDB, block.Hash(), block.NumberU64(), entries); writeErr != nil {
-				log.Error("Failed to store blob sidecars", "block", block.NumberU64(), "err", writeErr)
-			}
+	// Always store blob sidecars at build time so they can be served to peers.
+	if sidecars, txHashes := vm.miner.LastSidecars(); len(sidecars) > 0 {
+		entries := buildBlobSidecarEntries(block, sidecars, txHashes)
+		if writeErr := customrawdb.WriteBlobSidecars(vm.blobSidecarEthDB, block.Hash(), block.NumberU64(), entries); writeErr != nil {
+			log.Error("Failed to store blob sidecars", "block", block.NumberU64(), "err", writeErr)
 		}
 	}
 

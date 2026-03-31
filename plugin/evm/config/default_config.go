@@ -95,8 +95,7 @@ func NewDefaultConfig() Config {
 		// RPC settings
 		BatchRequestLimit:    1000,
 		BatchResponseMaxSize: 25 * 1000 * 1000, // 25MB
-		// Blob transaction settings (disabled by default)
-		BlobPoolEnabled:     false,
+		// Blob transaction settings
 		BlobAPIEnabled:      false,
 		BlobRetentionBlocks: 604800, // ~14 days at 2s block time
 		BlobPruneInterval:   timeToDuration(10 * time.Minute),

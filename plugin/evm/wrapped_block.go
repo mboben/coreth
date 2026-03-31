@@ -99,8 +99,8 @@ func (b *wrappedBlock) Accept(context.Context) error {
 	}
 
 	// Fetch blob sidecars from peers if this block has blob txs and we don't have them.
-	// This is for observation (non-validator) nodes that don't build blocks.
-	if vm.config.BlobPoolEnabled && vm.blobFetcher != nil {
+	// This runs on all nodes so every validator has all sidecars (not just the ones it built).
+	if vm.blobFetcher != nil {
 		if blockHasBlobTxs(b.ethBlock) && !customrawdb.HasBlobSidecars(vm.blobSidecarEthDB, b.ethBlock.Hash()) {
 			blockHash := b.ethBlock.Hash()
 			blockNum := b.ethBlock.NumberU64()
@@ -433,8 +433,6 @@ func (b *wrappedBlock) syntacticVerify() error {
 		}
 		if ethHeader.BlobGasUsed == nil {
 			return errors.New("blob gas used must not be nil in Cancun")
-		} else if *ethHeader.BlobGasUsed > 0 {
-			return fmt.Errorf("blobs not enabled on avalanche networks: used %d blob gas, expected 0", *ethHeader.BlobGasUsed)
 		}
 	}
 
