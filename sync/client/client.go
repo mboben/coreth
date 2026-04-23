@@ -324,7 +324,7 @@ func (c *client) get(ctx context.Context, request message.Request, parseFn parse
 		var (
 			response []byte
 			nodeID   ids.NodeID
-			start    time.Time = time.Now()
+			start    = time.Now()
 		)
 		if len(c.stateSyncNodes) == 0 {
 			minVersion := StateSyncVersion

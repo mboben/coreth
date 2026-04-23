@@ -38,7 +38,7 @@ import (
 
 func TestEthTxGossip(t *testing.T) {
 	require := require.New(t)
-	ctx := context.Background()
+	ctx := t.Context()
 	snowCtx := snowtest.Context(t, snowtest.CChainID)
 	validatorState := utils.NewTestValidatorState()
 	snowCtx.ValidatorState = validatorState
@@ -146,7 +146,7 @@ func TestEthTxGossip(t *testing.T) {
 
 	errs := vm.txPool.Add([]*types.Transaction{signedTx}, true, true)
 	require.Len(errs, 1)
-	require.Nil(errs[0])
+	require.NoError(errs[0])
 
 	// wait so we aren't throttled by the vm
 	time.Sleep(5 * time.Second)
@@ -176,7 +176,7 @@ func TestEthTxGossip(t *testing.T) {
 // Tests that a tx is gossiped when it is issued
 func TestEthTxPushGossipOutbound(t *testing.T) {
 	require := require.New(t)
-	ctx := context.Background()
+	ctx := t.Context()
 	snowCtx := snowtest.Context(t, snowtest.CChainID)
 	sender := &enginetest.SenderStub{
 		SentAppGossip: make(chan []byte, 1),
@@ -233,7 +233,7 @@ func TestEthTxPushGossipOutbound(t *testing.T) {
 // Tests that a gossiped tx is added to the mempool and forwarded
 func TestEthTxPushGossipInbound(t *testing.T) {
 	require := require.New(t)
-	ctx := context.Background()
+	ctx := t.Context()
 	snowCtx := snowtest.Context(t, snowtest.CChainID)
 
 	sender := &enginetest.Sender{}

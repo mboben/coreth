@@ -16,7 +16,6 @@ import (
 	"github.com/ava-labs/avalanchego/utils/hashing"
 	"github.com/ava-labs/avalanchego/utils/set"
 	"github.com/ava-labs/avalanchego/vms/components/avax"
-	"github.com/ava-labs/avalanchego/vms/platformvm/fx"
 	"github.com/ava-labs/avalanchego/vms/secp256k1fx"
 	"github.com/ava-labs/libevm/accounts"
 
@@ -31,7 +30,11 @@ var _ atomic.Visitor = (*semanticVerifier)(nil)
 var (
 	ErrAssetIDMismatch            = errors.New("asset IDs in the input don't match the utxo")
 	ErrConflictingAtomicInputs    = errors.New("invalid block due to conflicting atomic inputs")
+	errFailedToFetchImportUTXOs   = errors.New("failed to fetch import UTXOs")
+	errFailedToUnmarshalUTXO      = errors.New("failed to unmarshal UTXO")
 	errRejectedParent             = errors.New("rejected parent")
+	errIncorrectNumCredentials    = errors.New("incorrect number of credentials")
+	errIncorrectNumSignatures     = errors.New("incorrect number of signatures")
 	errPublicKeySignatureMismatch = errors.New("signature doesn't match public key")
 )
 
@@ -44,7 +47,7 @@ type BlockFetcher interface {
 
 type VerifierBackend struct {
 	Ctx          *snow.Context
-	Fx           fx.Fx
+	Fx           *secp256k1fx.Fx
 	Rules        extras.Rules
 	Bootstrapped bool
 	BlockFetcher BlockFetcher
@@ -121,7 +124,7 @@ func (s *semanticVerifier) ImportTx(utx *atomic.UnsignedImportTx) error {
 	}
 
 	if len(stx.Creds) != len(utx.ImportedInputs) {
-		return fmt.Errorf("import tx contained mismatched number of inputs/credentials (%d vs. %d)", len(utx.ImportedInputs), len(stx.Creds))
+		return fmt.Errorf("%w: (%d vs. %d)", errIncorrectNumCredentials, len(utx.ImportedInputs), len(stx.Creds))
 	}
 
 	if !backend.Bootstrapped {
@@ -137,7 +140,7 @@ func (s *semanticVerifier) ImportTx(utx *atomic.UnsignedImportTx) error {
 	// allUTXOBytes is guaranteed to be the same length as utxoIDs
 	allUTXOBytes, err := ctx.SharedMemory.Get(utx.SourceChain, utxoIDs)
 	if err != nil {
-		return fmt.Errorf("failed to fetch import UTXOs from %s due to: %w", utx.SourceChain, err)
+		return fmt.Errorf("%w from %s due to: %w", errFailedToFetchImportUTXOs, utx.SourceChain, err)
 	}
 
 	for i, in := range utx.ImportedInputs {
@@ -145,7 +148,7 @@ func (s *semanticVerifier) ImportTx(utx *atomic.UnsignedImportTx) error {
 
 		utxo := &avax.UTXO{}
 		if _, err := atomic.Codec.Unmarshal(utxoBytes, utxo); err != nil {
-			return fmt.Errorf("failed to unmarshal UTXO: %w", err)
+			return fmt.Errorf("%w: %w", errFailedToUnmarshalUTXO, err)
 		}
 
 		cred := stx.Creds[i]
@@ -245,7 +248,7 @@ func (s *semanticVerifier) ExportTx(utx *atomic.UnsignedExportTx) error {
 	}
 
 	if len(utx.Ins) != len(stx.Creds) {
-		return fmt.Errorf("export tx contained mismatched number of inputs/credentials (%d vs. %d)", len(utx.Ins), len(stx.Creds))
+		return fmt.Errorf("export tx contained %w want %d got %d", errIncorrectNumCredentials, len(utx.Ins), len(stx.Creds))
 	}
 
 	txHash := hashing.ComputeHash256(utx.Bytes())
@@ -261,7 +264,7 @@ func (s *semanticVerifier) ExportTx(utx *atomic.UnsignedExportTx) error {
 		}
 
 		if len(cred.Sigs) != 1 {
-			return fmt.Errorf("expected one signature for EVM Input Credential, but found: %d", len(cred.Sigs))
+			return fmt.Errorf("%w want 1 signature for EVM Input Credential, but got %d", errIncorrectNumSignatures, len(cred.Sigs))
 		}
 
 		sig := cred.Sigs[0][:]

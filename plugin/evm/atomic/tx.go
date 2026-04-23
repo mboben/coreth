@@ -37,7 +37,7 @@ const (
 var (
 	ErrWrongNetworkID = errors.New("tx was issued with a different network ID")
 	ErrNilTx          = errors.New("tx is nil")
-	errNoValueOutput  = errors.New("output has no value")
+	ErrNoValueOutput  = errors.New("output has no value")
 	ErrNoValueInput   = errors.New("input has no value")
 	ErrNoGasUsed      = errors.New("no gas used")
 	errNilOutput      = errors.New("nil output")
@@ -67,12 +67,12 @@ type EVMOutput struct {
 	AssetID ids.ID         `serialize:"true" json:"assetID"`
 }
 
-func (o EVMOutput) Compare(other EVMOutput) int {
-	addrComp := bytes.Compare(o.Address.Bytes(), other.Address.Bytes())
+func (out EVMOutput) Compare(other EVMOutput) int {
+	addrComp := bytes.Compare(out.Address.Bytes(), other.Address.Bytes())
 	if addrComp != 0 {
 		return addrComp
 	}
-	return bytes.Compare(o.AssetID[:], other.AssetID[:])
+	return bytes.Compare(out.AssetID[:], other.AssetID[:])
 }
 
 // EVMInput defines an input created from the EVM state to fund export transactions
@@ -83,12 +83,12 @@ type EVMInput struct {
 	Nonce   uint64         `serialize:"true" json:"nonce"`
 }
 
-func (i EVMInput) Compare(other EVMInput) int {
-	addrComp := bytes.Compare(i.Address.Bytes(), other.Address.Bytes())
+func (in EVMInput) Compare(other EVMInput) int {
+	addrComp := bytes.Compare(in.Address.Bytes(), other.Address.Bytes())
 	if addrComp != 0 {
 		return addrComp
 	}
-	return bytes.Compare(i.AssetID[:], other.AssetID[:])
+	return bytes.Compare(in.AssetID[:], other.AssetID[:])
 }
 
 // Verify ...
@@ -97,7 +97,7 @@ func (out *EVMOutput) Verify() error {
 	case out == nil:
 		return errNilOutput
 	case out.Amount == 0:
-		return errNoValueOutput
+		return ErrNoValueOutput
 	case out.AssetID == ids.Empty:
 		return errEmptyAssetID
 	}
@@ -337,6 +337,6 @@ func CalculateDynamicFee(cost uint64, baseFee *big.Int) (uint64, error) {
 	return fee.Uint64(), nil
 }
 
-func calcBytesCost(len int) uint64 {
-	return uint64(len) * TxBytesGas
+func calcBytesCost(n int) uint64 {
+	return uint64(n) * TxBytesGas
 }

@@ -39,14 +39,15 @@ import (
 
 	"github.com/ava-labs/avalanchego/utils/timer/mockable"
 	"github.com/ava-labs/avalanchego/utils/units"
+	"github.com/ava-labs/avalanchego/vms/evm/acp176"
 	"github.com/ava-labs/avalanchego/vms/evm/predicate"
 	"github.com/ava-labs/coreth/consensus"
 	"github.com/ava-labs/coreth/core"
 	"github.com/ava-labs/coreth/core/extstate"
 	"github.com/ava-labs/coreth/core/txpool"
 	"github.com/ava-labs/coreth/params"
-	customheader "github.com/ava-labs/coreth/plugin/evm/header"
-	"github.com/ava-labs/coreth/plugin/evm/upgrade/acp176"
+	"github.com/ava-labs/coreth/plugin/evm/customheader"
+	"github.com/ava-labs/coreth/plugin/evm/customtypes"
 	"github.com/ava-labs/coreth/plugin/evm/upgrade/cortina"
 	"github.com/ava-labs/coreth/precompile/precompileconfig"
 	"github.com/ava-labs/libevm/common"
@@ -142,34 +143,36 @@ func (w *worker) setEtherbase(addr common.Address) {
 func (w *worker) commitNewWork(predicateContext *precompileconfig.PredicateContext) (*types.Block, error) {
 	w.mu.RLock()
 	defer w.mu.RUnlock()
-
-	tstart := w.clock.Time()
-	timestamp := uint64(tstart.Unix())
-	parent := w.chain.CurrentBlock()
-	// Note: in order to support asynchronous block production, blocks are allowed to have
-	// the same timestamp as their parent. This allows more than one block to be produced
-	// per second.
-	if parent.Time >= timestamp {
-		timestamp = parent.Time
-	}
-
-	chainExtra := params.GetExtra(w.chainConfig)
-	gasLimit, err := customheader.GasLimit(chainExtra, parent, timestamp)
-	if err != nil {
-		return nil, fmt.Errorf("calculating new gas limit: %w", err)
-	}
-	baseFee, err := customheader.BaseFee(chainExtra, parent, timestamp)
-	if err != nil {
-		return nil, fmt.Errorf("failed to calculate new base fee: %w", err)
-	}
+	var (
+		parent      = w.chain.CurrentBlock()
+		chainExtra  = params.GetExtra(w.chainConfig)
+		tstart      = customheader.GetNextTimestamp(parent, w.clock.Time())
+		timestamp   = uint64(tstart.Unix())
+		timestampMS = uint64(tstart.UnixMilli())
+	)
 
 	header := &types.Header{
 		ParentHash: parent.Hash(),
 		Number:     new(big.Int).Add(parent.Number, common.Big1),
-		GasLimit:   gasLimit,
 		Time:       timestamp,
-		BaseFee:    baseFee,
 	}
+
+	if chainExtra.IsGranite(timestamp) {
+		headerExtra := customtypes.GetHeaderExtra(header)
+		headerExtra.TimeMilliseconds = &timestampMS
+	}
+
+	gasLimit, err := customheader.GasLimit(chainExtra, parent, timestampMS)
+	if err != nil {
+		return nil, fmt.Errorf("calculating new gas limit: %w", err)
+	}
+	header.GasLimit = gasLimit
+
+	baseFee, err := customheader.BaseFee(chainExtra, parent, timestampMS)
+	if err != nil {
+		return nil, fmt.Errorf("failed to calculate new base fee: %w", err)
+	}
+	header.BaseFee = baseFee
 
 	// Apply EIP-4844, EIP-4788.
 	if w.chainConfig.IsCancun(header.Number, header.Time) {
@@ -270,7 +273,8 @@ func (w *worker) createCurrentEnvironment(predicateContext *precompileconfig.Pre
 	}
 
 	chainConfigExtra := params.GetExtra(w.chainConfig)
-	capacity, err := customheader.GasCapacity(chainConfigExtra, parent, header.Time)
+	timeMS := customtypes.HeaderTimeMilliseconds(header)
+	capacity, err := customheader.GasCapacity(chainConfigExtra, parent, timeMS)
 	if err != nil {
 		return nil, fmt.Errorf("calculating gas capacity: %w", err)
 	}
@@ -360,7 +364,7 @@ func (w *worker) applyTransaction(env *environment, tx *types.Transaction, coinb
 
 	rulesExtra := params.GetRulesExtra(env.rules)
 	if rulesExtra.IsDurango {
-		results, err := core.CheckPredicates(env.rules, env.predicateContext, tx)
+		results, err := core.CheckTxPredicates(env.rules, env.predicateContext, tx)
 		if err != nil {
 			log.Debug("Transaction predicate failed verification in miner", "tx", tx.Hash(), "err", err)
 			return nil, err
@@ -519,7 +523,6 @@ func (w *worker) handleResult(env *environment, block *types.Block, createdAt ti
 	var (
 		hash     = block.Hash()
 		receipts = make([]*types.Receipt, len(unfinishedReceipts))
-		logs     []*types.Log
 	)
 	for i, unfinishedReceipt := range unfinishedReceipts {
 		receipt := new(types.Receipt)
@@ -540,7 +543,6 @@ func (w *worker) handleResult(env *environment, block *types.Block, createdAt ti
 			*log = *unfinishedLog
 			log.BlockHash = hash
 		}
-		logs = append(logs, receipt.Logs...)
 	}
 	fees := totalFees(block, receipts)
 	feesInEther := new(big.Float).Quo(new(big.Float).SetInt(fees), big.NewFloat(ethparams.Ether))

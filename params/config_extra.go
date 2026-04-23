@@ -50,25 +50,26 @@ func SetEthUpgrades(c *ChainConfig) error {
 	extra := GetExtra(c)
 	// Because Fuji and Mainnet have already accepted the Berlin and London
 	// blocks, it is assumed that they are scheduled for activation.
-	if c.ChainID != nil && AvalancheFujiChainID.Cmp(c.ChainID) == 0 {
+	switch {
+	case c.ChainID != nil && AvalancheFujiChainID.Cmp(c.ChainID) == 0:
 		c.BerlinBlock = big.NewInt(184985) // https://testnet.snowtrace.io/block/184985?chainid=43113, AP2 activation block
 		c.LondonBlock = big.NewInt(805078) // https://testnet.snowtrace.io/block/805078?chainid=43113, AP3 activation block
-	} else if c.ChainID != nil && AvalancheMainnetChainID.Cmp(c.ChainID) == 0 {
+	case c.ChainID != nil && AvalancheMainnetChainID.Cmp(c.ChainID) == 0:
 		c.BerlinBlock = big.NewInt(1640340) // https://snowtrace.io/block/1640340?chainid=43114, AP2 activation block
 		c.LondonBlock = big.NewInt(3308552) // https://snowtrace.io/block/3308552?chainid=43114, AP3 activation block
-	} else if c.ChainID != nil && CostonChainID.Cmp(c.ChainID) == 0 {
+	case c.ChainID != nil && CostonChainID.Cmp(c.ChainID) == 0:
 		// Coston did not have AP3 active immediately
 		c.BerlinBlock = big.NewInt(0)     // AP2 has always been active
 		c.LondonBlock = big.NewInt(55188) // https://coston.testnet.flarescan.com/block/55188, AP3 activation block
-	} else if c.ChainID != nil && SongbirdChainID.Cmp(c.ChainID) == 0 {
+	case c.ChainID != nil && SongbirdChainID.Cmp(c.ChainID) == 0:
 		// Songbird did not have AP3 active immediately
 		c.BerlinBlock = big.NewInt(0)        // AP2 has always been active
 		c.LondonBlock = big.NewInt(12349716) // https://songbird.flarescan.com/block/12349716, AP3 activation block
-	} else if c.ChainID != nil && (CostwoChainID.Cmp(c.ChainID) == 0 || FlareChainID.Cmp(c.ChainID) == 0) {
+	case c.ChainID != nil && (CostwoChainID.Cmp(c.ChainID) == 0 || FlareChainID.Cmp(c.ChainID) == 0):
 		// Flare and Costwo have always hand AP3 activated, so BerlinBlock and LondonBlock are both 0.
 		c.BerlinBlock = big.NewInt(0)
 		c.LondonBlock = big.NewInt(0)
-	} else {
+	default:
 		// In testing or local networks, we only support enabling Berlin and
 		// London at the initially active time. This corresponds to an intended
 		// block number of 0.

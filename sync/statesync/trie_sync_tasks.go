@@ -85,8 +85,8 @@ func (m *mainTrieTask) OnLeafs(db ethdb.KeyValueWriter, keys, vals [][]byte) err
 			codeHashes = append(codeHashes, codeHash)
 		}
 	}
-	// Add collected code hashes to the code syncer.
-	return m.sync.codeSyncer.AddCode(codeHashes)
+	// Add collected code hashes to the code fetcher.
+	return m.sync.codeQueue.AddCode(codeHashes)
 }
 
 type storageTrieTask struct {
@@ -117,7 +117,7 @@ func (s *storageTrieTask) OnStart() (bool, error) {
 	}
 	storageTrie, err := trie.New(trie.StorageTrieID(s.sync.root, s.root, firstAccount), s.sync.trieDB)
 	if err != nil {
-		return false, nil
+		return false, nil //nolint:nilerr // the storage trie does not exist, so it should be rerequested
 	}
 
 	// If the storage trie is already on disk, we only need to populate the storage snapshot for [accountHash]
