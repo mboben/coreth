@@ -7,10 +7,13 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/ava-labs/avalanchego/vms/components/gas"
+	"github.com/ava-labs/avalanchego/vms/evm/acp176"
 	"github.com/ava-labs/libevm/core/types"
 
 	"github.com/ava-labs/coreth/params/extras"
 	"github.com/ava-labs/coreth/plugin/evm/customtypes"
+	"github.com/ava-labs/coreth/plugin/evm/upgrade/granite"
 )
 
 // BaseFee takes the previous header and the timestamp of its child block and
@@ -24,6 +27,20 @@ func BaseFee(
 ) (*big.Int, error) {
 	timestamp := timeMS / 1000
 	switch {
+	case config.IsGranite(timestamp):
+		state, err := feeStateBeforeBlock(config, parent, timeMS)
+		if err != nil {
+			return nil, fmt.Errorf("calculating initial fee state: %w", err)
+		}
+
+		var minPrice uint64
+		if config.IsFlareFamilyCode() {
+			minPrice = granite.MinGasPrice
+		} else {
+			minPrice = acp176.MinGasPrice
+		}
+		price := state.GasPriceWithMin(gas.Price(minPrice))
+		return new(big.Int).SetUint64(uint64(price)), nil
 	case config.IsFortuna(timestamp):
 		state, err := feeStateBeforeBlock(config, parent, timeMS)
 		if err != nil {

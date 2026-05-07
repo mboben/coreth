@@ -295,6 +295,16 @@ func (c *ChainConfig) IsSongbirdCode() bool {
 	return networkID == constants.SongbirdID || networkID == constants.CostonID || networkID == constants.LocalID
 }
 
+// IsFlareFamilyCode returns true if this is any Flare- or Songbird-family
+// network (Flare, Costwo, LocalFlare, Songbird, Coston, Local).
+func (c *ChainConfig) IsFlareFamilyCode() bool {
+	if c == nil || c.SnowCtx == nil {
+		return false
+	}
+	id := c.SnowCtx.NetworkID
+	return constants.IsFlareNetworkID(id) || constants.IsSgbNetworkID(id)
+}
+
 // IsForkTransition returns true if `fork` activates during the transition from
 // `parent` to `current`.
 // Taking `parent` as a pointer allows for us to pass nil when checking forks
