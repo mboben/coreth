@@ -43,7 +43,7 @@ func GasLimit(
 		// capacity, to minimize the differences with upstream geth. During
 		// block building and gas usage calculations, the gas limit is checked
 		// against the current capacity.
-		return uint64(state.MaxCapacity()), nil
+		return uint64(state.MaxCapacityWith(config.ACP176Params(timestamp))), nil
 	case config.IsCortina(timestamp):
 		return cortina.GasLimit, nil
 	case config.IsSongbirdCode():
@@ -120,7 +120,7 @@ func VerifyGasLimit(
 		if err != nil {
 			return fmt.Errorf("calculating initial fee state: %w", err)
 		}
-		maxCapacity := state.MaxCapacity()
+		maxCapacity := state.MaxCapacityWith(config.ACP176Params(header.Time))
 		if header.GasLimit != uint64(maxCapacity) {
 			return fmt.Errorf("%w: have %d, want %d",
 				errInvalidGasLimit,

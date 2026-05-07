@@ -72,6 +72,7 @@ import (
 	"github.com/ava-labs/coreth/plugin/evm/extension"
 	"github.com/ava-labs/coreth/plugin/evm/gossip"
 	"github.com/ava-labs/coreth/plugin/evm/message"
+	"github.com/ava-labs/coreth/plugin/evm/upgrade/granite"
 	"github.com/ava-labs/coreth/plugin/evm/vmerrors"
 	"github.com/ava-labs/coreth/plugin/evm/vmsync"
 	"github.com/ava-labs/coreth/precompile/precompileconfig"
@@ -540,11 +541,18 @@ func (vm *VM) initializeChain(lastAcceptedHash common.Hash) error {
 	}
 
 	// If the gas target is specified, calculate the desired target excess and
-	// use it during block creation.
+	// use it during block creation. On Flare-family chains the Granite
+	// parameter set is used (independent of activation timing) since a
+	// Flare-family operator setting GasTarget expects the Granite-era
+	// target/excess relationship.
 	var desiredTargetExcess *gas.Gas
 	if vm.config.GasTarget != nil {
+		params := acp176.DefaultParams
+		if vm.chainConfigExtra().IsFlareFamilyCode() {
+			params = granite.DefaultParams
+		}
 		desiredTargetExcess = new(gas.Gas)
-		*desiredTargetExcess = acp176.DesiredTargetExcess(*vm.config.GasTarget)
+		*desiredTargetExcess = acp176.DesiredTargetExcessWith(params, *vm.config.GasTarget)
 	}
 
 	var desiredDelayExcess *acp226.DelayExcess

@@ -10,8 +10,10 @@ import (
 
 	"github.com/ava-labs/avalanchego/snow"
 	"github.com/ava-labs/avalanchego/utils/constants"
+	"github.com/ava-labs/avalanchego/vms/evm/acp176"
 	"github.com/ava-labs/libevm/common"
 
+	"github.com/ava-labs/coreth/plugin/evm/upgrade/granite"
 	"github.com/ava-labs/coreth/utils"
 
 	ethparams "github.com/ava-labs/libevm/params"
@@ -303,6 +305,16 @@ func (c *ChainConfig) IsFlareFamilyCode() bool {
 	}
 	id := c.SnowCtx.NetworkID
 	return constants.IsFlareNetworkID(id) || constants.IsSgbNetworkID(id)
+}
+
+// ACP176Params returns the ACP-176 parameter set that applies at the given
+// block timestamp. On Flare-family networks past Granite, this is the
+// Granite parameter set; otherwise the default acp176 parameters apply.
+func (c *ChainConfig) ACP176Params(timestamp uint64) *acp176.Params {
+	if c.IsGranite(timestamp) && c.IsFlareFamilyCode() {
+		return granite.DefaultParams
+	}
+	return acp176.DefaultParams
 }
 
 // IsForkTransition returns true if `fork` activates during the transition from

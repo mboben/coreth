@@ -1126,7 +1126,7 @@ func (bc *BlockChain) Accept(block *types.Block) error {
 
 		latestGasExcessGauge.Update(int64(s.Gas.Excess))
 		latestGasCapacityGauge.Update(int64(s.Gas.Capacity))
-		latestGasTargetGauge.Update(int64(s.Target()))
+		latestGasTargetGauge.Update(int64(s.TargetWith(extraConfig.ACP176Params(block.Time()))))
 	}
 	return nil
 }
