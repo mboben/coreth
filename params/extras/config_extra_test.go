@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/ava-labs/avalanchego/upgrade"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/ava-labs/coreth/utils"
