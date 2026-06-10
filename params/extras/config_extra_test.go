@@ -55,7 +55,7 @@ func TestIsTimestampForked(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			res := isTimestampForked(test.fork, test.block)
-			assert.Equal(t, test.isForked, res)
+			require.Equal(t, test.isForked, res)
 		})
 	}
 }
@@ -125,7 +125,7 @@ func TestIsForkTransition(t *testing.T) {
 	} {
 		t.Run(name, func(t *testing.T) {
 			res := IsForkTransition(test.fork, test.parent, test.current)
-			assert.Equal(t, test.transitioned, res)
+			require.Equal(t, test.transitioned, res)
 		})
 	}
 }

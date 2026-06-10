@@ -1,9 +1,9 @@
 // Copyright (C) 2019-2025, Ava Labs, Inc. All rights reserved.
 // See the file LICENSE for licensing terms.
+
 package vm
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -35,20 +35,6 @@ var (
 
 // AvaxAPI offers Avalanche network related API methods
 type AvaxAPI struct{ vm *VM }
-
-type VersionReply struct {
-	Version string `json:"version"`
-}
-
-// ClientVersion returns the version of the VM running
-func (service *AvaxAPI) Version(_ *http.Request, _ *struct{}, reply *VersionReply) error {
-	version, err := service.vm.InnerVM.Version(context.Background())
-	if err != nil {
-		return err
-	}
-	reply.Version = version
-	return nil
-}
 
 // GetUTXOs gets all utxos for passed in addresses
 func (service *AvaxAPI) GetUTXOs(_ *http.Request, args *api.GetUTXOsArgs, reply *api.GetUTXOsReply) error {
